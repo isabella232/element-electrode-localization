@@ -5,7 +5,7 @@ This repository is currently a work in progress.
 See [Background](Background.md) for the background information and development timeline.
 
 ## Element architecture
-
+<!-- ![element-electrode-localization](https://github.com/datajoint/element-electrode-localization/blob/main/images/diagram_electrode-localization.svg) -->
 ## Installation
 
 + Install `element-electrode-localization`
