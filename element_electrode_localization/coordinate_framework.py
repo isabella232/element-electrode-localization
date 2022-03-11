@@ -78,30 +78,22 @@ class ParentBrainRegion(dj.Lookup):
 def load_ccf_annotation(ccf_id, version_name, voxel_resolution,
                         nrrd_filepath, ontology_csv_filepath, colorcode_csv_filepath):
     """
-    Load the CCF r3 10 uM NRRD Dataset scaled to 20um.
+    :param ccf_id: unique id to identify a new CCF dataset to be inserted
+    :param version_name: CCF version
+    :param voxel_resolution: voxel resolution in micron
+    :param nrrd_filepath: path to the .nrrd file for the volume data
+    :param ontology_csv_filepath: path to the .csv file for the brain region ontology
+    :param colorcode_csv_filepath: path to the .csv file for the brain region color code
 
-    Expects dj.config:
-
-        "custom": {
-            "ccf_data_paths": {
-                "version_name": "CCF_2017",
-                "annotation_nrrd": "annotation_10.nrrd",
-                "region_csv": "mousebrainontology_2.csv",
-                "hexcode_csv": "hexcode.csv"
-            }
-        }
-
-    see also:
-
+    For an example Allen brain atlas for mouse, see:
     http://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017
-
     """
     nrrd_filepath = pathlib.Path(nrrd_filepath)
     ontology_csv_filepath = pathlib.Path(ontology_csv_filepath)
     colorcode_csv_filepath = pathlib.Path(colorcode_csv_filepath)
 
     regions = get_ontology_regions(ontology_csv_filepath, colorcode_csv_filepath)
-    stack, hdr = nrrd.read(nrrd_filepath)  # AP (x), DV (y), ML (z)
+    stack, hdr = nrrd.read(nrrd_filepath.as_posix())  # AP (x), DV (y), ML (z)
 
     log.info('.. loaded atlas brain volume of shape {} from {}'
              .format(stack.shape, nrrd_filepath))
