@@ -13,7 +13,7 @@ def activate(electrode_localization_schema_name, coordinate_framework_schema_nam
     activate(electrode_localization_schema_name, coordinate_framework_schema_name=None, *, create_schema=True, create_tables=True, linking_module=None)
         :param electrode_localization_schema_name: schema name on the database server to activate the `electrode_localization` element
         :param coordinate_framework_schema_name: schema name on the database server to activate the `coordinate_framework` element
-         - may be omitted if the `probe` element is already activated
+         - may be omitted if the `coordinate_framework` element is already activated
         :param create_schema: when True (default), create schema in the database if it does not yet exist.
         :param create_tables: when True (default), create tables in the database if they do not yet exist.
         :param linking_module: a module name or a module containing the
