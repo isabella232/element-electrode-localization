@@ -2,7 +2,7 @@ import importlib
 import inspect
 import datajoint as dj
 
-import coordinate_framework
+from . import coordinate_framework
 
 schema = dj.schema()
 
