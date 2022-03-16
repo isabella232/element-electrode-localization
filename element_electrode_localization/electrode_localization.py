@@ -6,7 +6,7 @@ from . import coordinate_framework
 
 schema = dj.schema()
 
-
+_linking_module = None
 def activate(electrode_localization_schema_name, coordinate_framework_schema_name=None, *, create_schema=True,
              create_tables=True, linking_module=None):
     """
