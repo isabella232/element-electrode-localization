@@ -37,17 +37,12 @@ def activate(electrode_localization_schema_name, coordinate_framework_schema_nam
     schema.activate(electrode_localization_schema_name, create_schema=create_schema,
                     create_tables=create_tables, add_objects=_linking_module.__dict__)
 
-
+        
 @schema
-class ElectrodePosition(dj.Manual):
+class ElectrodePosition(dj.Imported):
     definition = """
     -> ProbeInsertion
+    -> Electrode
+    ---
+    -> coordinate_framework.CCF.Voxel
     """
-
-    class ElectrodePosition(dj.Part):
-        definition = """
-        -> master
-        -> Electrode
-        ---
-        -> coordinate_framework.CCF.Voxel
-        """
