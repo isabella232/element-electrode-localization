@@ -50,7 +50,7 @@ class BrainRegionAnnotation(dj.Lookup):
         color_code=null: varchar(6)  # hexcode of the color code of this region
         """
 
-    class Voxel(dj.Manual):
+    class Voxel(dj.Part):
         definition = """
         -> master.BrainRegion
         -> CCF.Voxel
