@@ -76,23 +76,25 @@ class ParentBrainRegion(dj.Lookup):
 
 
 def load_ccf_annotation(ccf_id, version_name, voxel_resolution,
-                        nrrd_filepath, ontology_csv_filepath, colorcode_csv_filepath):
+                        nrrd_filepath, ontology_csv_filepath):
     """
     :param ccf_id: unique id to identify a new CCF dataset to be inserted
     :param version_name: CCF version
     :param voxel_resolution: voxel resolution in micron
     :param nrrd_filepath: path to the .nrrd file for the volume data
     :param ontology_csv_filepath: path to the .csv file for the brain region ontology
-    :param colorcode_csv_filepath: path to the .csv file for the brain region color code
 
     For an example Allen brain atlas for mouse, see:
     http://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017
+
+    For the structure/ontology tree, see:
+    https://community.brain-map.org/t/allen-mouse-ccf-accessing-and-using-related-data-and-tools/359
+    (particularly the ontology file downloadable as CSV)
     """
     nrrd_filepath = pathlib.Path(nrrd_filepath)
     ontology_csv_filepath = pathlib.Path(ontology_csv_filepath)
-    colorcode_csv_filepath = pathlib.Path(colorcode_csv_filepath)
 
-    regions = get_ontology_regions(ontology_csv_filepath, colorcode_csv_filepath)
+    ontology = pd.read_csv(ontology_csv_filepath)
     stack, hdr = nrrd.read(nrrd_filepath.as_posix())  # AP (x), DV (y), ML (z)
 
     log.info('.. loaded atlas brain volume of shape {} from {}'
@@ -104,25 +106,24 @@ def load_ccf_annotation(ccf_id, version_name, voxel_resolution,
                  'ccf_description': f'Version: {version_name}'
                                     f' - Voxel resolution (uM): {voxel_resolution}'
                                     f' - Volume file: {nrrd_filepath.name}'
-                                    f' - Region ontology file: {ontology_csv_filepath.name},'
-                                    f' {colorcode_csv_filepath.name}'}
+                                    f' - Region ontology file: {ontology_csv_filepath.name}'}
 
     with dj.conn().transaction:
         CCF.insert1(ccf_entry)
         BrainRegionAnnotation.insert1(ccf_key)
         BrainRegionAnnotation.BrainRegion.insert([
             dict(ccf_entry,
-                 acronym=r.region_name,
-                 region_id=region_id,
-                 region_name=r.region_name,
-                 color_code=r.hexcode) for region_id, r in regions.iterrows()])
+                 acronym=r.acronym,
+                 region_id=r.id,
+                 region_name=r.safe_name,
+                 color_code=r.color_hex_triplet) for region_id, r in ontology.iterrows()])
 
         # Process voxels per brain region
-        for idx, (region_id, r) in enumerate(regions.iterrows()):
+        for idx, (region_id, r) in enumerate(ontology.iterrows()):
             region_id = int(region_id)
 
             log.info('.. loading region {} ({}/{}) ({})'
-                     .format(region_id, idx, len(regions), r.region_name))
+                     .format(region_id, idx, len(ontology), r.region_name))
 
             # extracting filled volumes from stack in scaled [[x,y,z]] shape,
             vol = (np.array(np.where(stack == region_id)).T * voxel_resolution)
@@ -143,12 +144,3 @@ def load_ccf_annotation(ccf_id, version_name, voxel_resolution,
             BrainRegionAnnotation.Voxel.insert(vol)
 
     log.info('.. done.')
-
-
-def get_ontology_regions(ontology_csv_filepath, colorcode_csv_filepath):
-    regions = pd.read_csv(ontology_csv_filepath, header=None, index_col=0)
-    regions.columns = ['region_name']
-    hexcode = pd.read_csv(colorcode_csv_filepath, header=None, index_col=0)
-    hexcode.columns = ['hexcode']
-
-    return pd.concat([regions, hexcode], axis=1)
