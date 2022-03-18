@@ -19,6 +19,7 @@ def activate(schema_name, *, create_schema=True, create_tables=True):
         :param create_tables: when True (default), create tables in the database if they do not yet exist.
     """
     schema.activate(schema_name, create_schema=create_schema, create_tables=create_tables)
+    dj.conn().query(f'ALTER DATABASE `{schema_name}` CHARACTER SET utf8 COLLATE utf8_bin;')
 
 
 @schema
@@ -26,7 +27,7 @@ class CCF(dj.Lookup):
     definition = """  # Common Coordinate Framework
     ccf_id:             int             # CCF ID
     ---
-    ccf_version:        int             # Allen CCF Version - e.g. CCFv3
+    ccf_version:        varchar(64)     # Allen CCF Version - e.g. CCFv3
     ccf_description='': varchar(255)    # CCFLabel Description
     """
 
@@ -49,7 +50,7 @@ class BrainRegionAnnotation(dj.Lookup):
     class BrainRegion(dj.Part):
         definition = """
         -> master
-        acronym: varchar(32)
+        acronym: varchar(32)  # CHARACTER SET utf8 COLLATE utf8_bin
         ---
         region_name: varchar(128)
         region_id=null: int
@@ -84,6 +85,11 @@ def load_ccf_annotation(ccf_id, version_name, voxel_resolution,
     :param nrrd_filepath: path to the .nrrd file for the volume data
     :param ontology_csv_filepath: path to the .csv file for the brain region ontology
 
+    load_ccf_annotation(
+        ccf_id=0, version_name='ccf_2017', voxel_resolution=10,
+        nrrd_filepath='./data/annotation_10.nrrd',
+        ontology_csv_filepath='./data/query.csv')
+
     For an example Allen brain atlas for mouse, see:
     http://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017
 
@@ -112,18 +118,18 @@ def load_ccf_annotation(ccf_id, version_name, voxel_resolution,
         CCF.insert1(ccf_entry)
         BrainRegionAnnotation.insert1(ccf_key)
         BrainRegionAnnotation.BrainRegion.insert([
-            dict(ccf_entry,
+            dict(ccf_key,
                  acronym=r.acronym,
                  region_id=r.id,
                  region_name=r.safe_name,
-                 color_code=r.color_hex_triplet) for region_id, r in ontology.iterrows()])
+                 color_code=r.color_hex_triplet) for _, r in ontology.iterrows()])
 
         # Process voxels per brain region
         for idx, (region_id, r) in enumerate(ontology.iterrows()):
             region_id = int(region_id)
 
             log.info('.. loading region {} ({}/{}) ({})'
-                     .format(region_id, idx, len(ontology), r.region_name))
+                     .format(region_id, idx, len(ontology), r.safe_name))
 
             # extracting filled volumes from stack in scaled [[x,y,z]] shape,
             vol = (np.array(np.where(stack == region_id)).T * voxel_resolution)
@@ -140,7 +146,7 @@ def load_ccf_annotation(ccf_id, version_name, voxel_resolution,
             vol['ccf_id'] = [ccf_key['ccf_id']] * len(vol)
             CCF.Voxel.insert(vol)
 
-            vol['acronym'] = [r.region_name] * len(vol)
+            vol['acronym'] = [r.safe_name] * len(vol)
             BrainRegionAnnotation.Voxel.insert(vol)
 
     log.info('.. done.')
