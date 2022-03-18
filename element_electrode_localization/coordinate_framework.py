@@ -97,6 +97,11 @@ def load_ccf_annotation(ccf_id, version_name, voxel_resolution,
     https://community.brain-map.org/t/allen-mouse-ccf-accessing-and-using-related-data-and-tools/359
     (particularly the ontology file downloadable as CSV)
     """
+    ccf_key = {'ccf_id': ccf_id}
+    if CCF & ccf_key:
+        print(f'CCF ID {ccf_id} already exists!')
+        return
+
     nrrd_filepath = pathlib.Path(nrrd_filepath)
     ontology_csv_filepath = pathlib.Path(ontology_csv_filepath)
 
