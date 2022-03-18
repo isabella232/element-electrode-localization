@@ -131,6 +131,7 @@ def load_ccf_annotation(ccf_id, version_name, voxel_resolution,
 
         # Process voxels per brain region
         for idx, (region_id, r) in enumerate(ontology.iterrows()):
+            dj.conn().ping()
             region_id = int(region_id)
 
             log.info('.. loading region {} ({}/{}) ({})'
