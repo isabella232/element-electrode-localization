@@ -14,12 +14,20 @@ schema = dj.schema()
 def activate(schema_name, *, create_schema=True, create_tables=True):
     """
     activate(schema_name, create_schema=True, create_tables=True)
-        :param schema_name: schema name on the database server to activate the `coordinate_framework` element
-        :param create_schema: when True (default), create schema in the database if it does not yet exist.
-        :param create_tables: when True (default), create tables in the database if they do not yet exist.
+        :param schema_name: schema name on the database server to activate the
+                            `coordinate_framework` element
+        :param create_schema: when True (default), create schema in the database if it
+                              does not yet exist.
+        :param create_tables: when True (default), create tables in the database if
+                              they do not yet exist.
     """
-    schema.activate(schema_name, create_schema=create_schema, create_tables=create_tables)
-    dj.conn().query(f'ALTER DATABASE `{schema_name}` CHARACTER SET utf8 COLLATE utf8_bin;')
+    schema.activate(schema_name, create_schema=create_schema,
+                    create_tables=create_tables)
+    dj.conn().query(f'ALTER DATABASE `{schema_name}` CHARACTER SET utf8 COLLATE '
+                    + 'utf8_bin;')
+
+
+# ----------------------------- Table declarations ----------------------
 
 
 @schema
@@ -66,7 +74,7 @@ class BrainRegionAnnotation(dj.Lookup):
 
 @schema
 class ParentBrainRegion(dj.Lookup):
-    definition = """ # Hierarchical structure between the brain regions
+    definition = """ # Hierarchical structure between the brain regionss
     -> BrainRegionAnnotation.BrainRegion
     ---
     -> BrainRegionAnnotation.BrainRegion.proj(parent='acronym')
@@ -117,7 +125,9 @@ def load_ccf_annotation(ccf_id, version_name, voxel_resolution,
                  'ccf_description': f'Version: {version_name}'
                                     f' - Voxel resolution (uM): {voxel_resolution}'
                                     f' - Volume file: {nrrd_filepath.name}'
-                                    f' - Region ontology file: {ontology_csv_filepath.name}'}
+                                    (' - Region ontology file: '
+                                     + ontology_csv_filepath.name)
+                 }
 
     with dj.conn().transaction:
         CCF.insert1(ccf_entry)

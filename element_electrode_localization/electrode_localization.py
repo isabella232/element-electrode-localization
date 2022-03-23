@@ -16,19 +16,25 @@ _linking_module = None
 ProbeInsertion, probe = None, None
 
 
-def activate(electrode_localization_schema_name, coordinate_framework_schema_name=None, *, create_schema=True,
-             create_tables=True, linking_module=None):
+def activate(electrode_localization_schema_name, coordinate_framework_schema_name=None,
+             *, create_schema=True, create_tables=True, linking_module=None):
     """
-    activate(electrode_localization_schema_name, coordinate_framework_schema_name=None, *, create_schema=True, create_tables=True, linking_module=None)
-        :param electrode_localization_schema_name: schema name on the database server to activate the `electrode_localization` element
-        :param coordinate_framework_schema_name: schema name on the database server to activate the `coordinate_framework` element
-         - may be omitted if the `coordinate_framework` element is already activated
-        :param create_schema: when True (default), create schema in the database if it does not yet exist.
-        :param create_tables: when True (default), create tables in the database if they do not yet exist.
+    activate(electrode_localization_schema_name, coordinate_framework_schema_name=None,
+             *, create_schema=True, create_tables=True, linking_module=None)
+        :param electrode_localization_schema_name: schema name on the database server to
+                                           activate the `electrode_localization` element
+        :param coordinate_framework_schema_name: schema name on the database server to
+                                            activate the `coordinate_framework` element.
+                                            May be omitted if already activated
+        :param create_schema: when True (default), create schema in the database if it
+                              does not yet exist.
+        :param create_tables: when True (default), create tables in the database if they
+                              do not yet exist.
         :param linking_module: a module name or a module containing the
          required dependencies to activate the `electrode_localization` element:
             Upstream tables:
-                + ProbeInsertion: table referenced by ElectrodePosition, typically identifying a Probe Insertion instance
+                + ProbeInsertion: table referenced by ElectrodePosition, typically
+                                  identifying a Probe Insertion instance
                 + probe: the probe schema - from element-array-ephys
     """
 
@@ -43,13 +49,14 @@ def activate(electrode_localization_schema_name, coordinate_framework_schema_nam
     probe = _linking_module.probe
 
     # activate
-    coordinate_framework.activate(coordinate_framework_schema_name, create_schema=create_schema,
+    coordinate_framework.activate(coordinate_framework_schema_name,
+                                  create_schema=create_schema,
                                   create_tables=create_tables)
     schema.activate(electrode_localization_schema_name, create_schema=create_schema,
                     create_tables=create_tables, add_objects=_linking_module.__dict__)
 
 
-# ----------------- Functions required by element-electrode-localization  ------------------
+# --------------- Functions required by element-electrode-localization  ----------------
 
 def get_electrode_localization_dir(probe_insertion_key: dict) -> str:
     """
@@ -62,7 +69,7 @@ def get_electrode_localization_dir(probe_insertion_key: dict) -> str:
     return _linking_module.get_electrode_localization_dir(probe_insertion_key)
 
 
-# ----------------------------- Table declarations ----------------------
+# ------------------------------------ Table declarations -----------------------------
 
         
 @schema
@@ -85,9 +92,11 @@ class ElectrodePosition(dj.Imported):
         electrode_location_dir = pathlib.Path(get_electrode_localization_dir(key))
         assert electrode_location_dir.exists()
 
-        channel_locations_files = list(electrode_location_dir.glob('*channel_locations*.json'))
+        channel_locations_files = list(electrode_location_dir.glob(
+                                       '*channel_locations*.json'))
 
-        electrodes_query = probe.ProbeType.Electrode * probe.Probe * ProbeInsertion & key
+        electrodes_query = (probe.ProbeType.Electrode * probe.Probe * ProbeInsertion
+                            & key)
 
         shanks = np.unique(electrodes_query.fetch('shank'))
 
@@ -97,13 +106,14 @@ class ElectrodePosition(dj.Imported):
                 raise ValueError(
                     'Only 1 file found ({}) for a {}-shank probe'.format(
                         channel_locations_files[0].name, len(shanks)))
-            if 'shank' in channel_locations_files[0].stem and channel_locations_files[0].stem[-1] != 1:
-                raise ValueError('The electrode-location file found ({}) is unexpected for this 1-shank probe')
+            if 'shank' in channel_locations_files[0].stem \
+               and channel_locations_files[0].stem[-1] != 1:
+                raise ValueError('The electrode-location file found ({}) is '
+                                 + 'unexpected for this 1-shank probe')
         else:
             if len(channel_locations_files) != len(shanks):  # ensure 1 file per shank
-                raise ValueError(
-                    '{} files found for a {}-shank probe'.format(len(channel_locations_files),
-                                                                 len(shanks)))
+                raise ValueError(f'{len(channel_locations_files)} files found for a '
+                                 + f'{len(shanks)}-shank probe')
             corresponding_shanks = [int(f.stem[-1]) for f in channel_locations_files]
 
         # Insertion
@@ -113,7 +123,7 @@ class ElectrodePosition(dj.Imported):
                 channel_locations_files,
                 corresponding_shanks):
 
-            log.debug('loading channel locations from {}'.format(channel_locations_file))
+            log.debug(f'loading channel locations from {channel_locations_file}')
             with open(channel_locations_file, 'r') as fh:
                 chn_loc_raw = json.loads(fh.read())
 
@@ -122,7 +132,8 @@ class ElectrodePosition(dj.Imported):
             if len(chn_loc_data['origin'].keys()) > 1:
                 log.error('More than one origin region found ({}). skipping.'.format(
                     chn_loc_data['origin']))
-                raise ValueError(f'More than one origin region found ({chn_loc_data["origin"]})')
+                raise ValueError('More than one origin region found '
+                                 + f'({chn_loc_data["origin"]})')
 
             # ensuring channel data is sorted;
             chn_loc_keymap = {int(k.split('_')[1]): k for k
@@ -151,10 +162,12 @@ class ElectrodePosition(dj.Imported):
             pos_xyz[:, 2] = pos_origin[2] - pos_xyz_raw[:, 2]
 
             # and quantizing to CCF voxel resolution;
-            pos_xyz = (voxel_resolution * np.around(pos_xyz / voxel_resolution)).astype(int)
+            pos_xyz = (voxel_resolution * np.around(pos_xyz / voxel_resolution)
+                       ).astype(int)
 
             # get recording geometry,
-            probe_electrodes = (electrodes_query & {'shank': shank_no}).fetch(order_by='electrode asc')
+            probe_electrodes = (electrodes_query & {'shank': shank_no}
+                                ).fetch(order_by='electrode asc')
 
             rec_electrodes = np.array(
                 [chn_loc_data['channels']['lateral'],
@@ -165,7 +178,8 @@ class ElectrodePosition(dj.Imported):
             # npx 2.0 probes do not have this offset (i.e. offset = 0um for all rows)
             lateral_offset = np.abs(np.diff((electrodes_query
                                              & {'shank_col': 1, 'shank': shank_no}
-                                             & 'shank_row in (1, 2)').fetch('x_coord'))[0])
+                                             & 'shank_row in (1, 2)').fetch('x_coord')
+                                            )[0])
             if lateral_offset:
                 rec_electrodes[:, 0] = (lateral_offset * (np.floor(
                     rec_electrodes[:, 0] / lateral_offset)))
@@ -179,7 +193,8 @@ class ElectrodePosition(dj.Imported):
             rec_to_elec_idx = np.array([elec_coord_map[tuple(i)]
                                         for i in rec_electrodes])
 
-            for electrode, x, y, z in zip(probe_electrodes[rec_to_elec_idx]['electrode'],
+            for electrode, x, y, z in zip(probe_electrodes[rec_to_elec_idx
+                                                           ]['electrode'],
                                           pos_xyz[:, 0], pos_xyz[:, 1], pos_xyz[:, 2]):
                 entry = {**key, 'electrode': electrode, 'x': x, 'y': y, 'z': z}
                 try:
