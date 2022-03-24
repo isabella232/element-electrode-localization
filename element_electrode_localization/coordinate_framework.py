@@ -5,6 +5,7 @@ import datajoint as dj
 import pandas as pd
 import numpy as np
 import nrrd
+import re
 
 
 log = logging.getLogger(__name__)
