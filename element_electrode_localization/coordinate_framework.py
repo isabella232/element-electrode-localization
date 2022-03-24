@@ -26,16 +26,16 @@ def activate(schema_name, *, create_schema=True, create_tables=True):
     dj.conn().query(f'ALTER DATABASE `{schema_name}` CHARACTER SET utf8 COLLATE '
                     + 'utf8_bin;')
 
-
 # ----------------------------- Table declarations ----------------------
 
 
 @schema
 class CCF(dj.Lookup):
     definition = """  # Common Coordinate Framework
-    ccf_id:             int             # CCF ID
+    ccf_id            : int             # CCF ID, a.k.a atlas ID
     ---
-    ccf_version:        varchar(64)     # Allen CCF Version - e.g. CCFv3
+    ccf_version       : varchar(64)     # Allen CCF Version - e.g. CCFv3
+    ccf_resolution    : varchar(4)      # voxel resolution in micron
     ccf_description='': varchar(255)    # CCFLabel Description
     """
 
@@ -71,6 +71,18 @@ class BrainRegionAnnotation(dj.Lookup):
         -> CCF.Voxel
         """
 
+    @classmethod
+    def voxel_query(self, x=None, y=None, z=None):
+        """Given one or more coordinates, return unique brain regions
+        :param x: x coordinate
+        :param y: y coordinate
+        :param z: z coordinate
+        """
+        if not any(x, y, z):
+            raise ValueError('Must specify at least one dimension')
+        # query = self.Voxel  #  TODO: add utility function name lookup
+        raise NotImplementedError('Coming soon')
+
 
 @schema
 class ParentBrainRegion(dj.Lookup):
@@ -85,7 +97,8 @@ class ParentBrainRegion(dj.Lookup):
 
 
 def load_ccf_annotation(ccf_id, version_name, voxel_resolution,
-                        nrrd_filepath, ontology_csv_filepath):
+                        nrrd_filepath, ontology_csv_filepath,
+                        skip_duplicates=False):
     """
     :param ccf_id: unique id to identify a new CCF dataset to be inserted
     :param version_name: CCF version
@@ -122,6 +135,7 @@ def load_ccf_annotation(ccf_id, version_name, voxel_resolution,
     ccf_key = {'ccf_id': ccf_id}
     ccf_entry = {**ccf_key,
                  'ccf_version': version_name,
+                 'ccf_resolution' : voxel_resolution,
                  'ccf_description': (f'Version: {version_name}'
                                      + f' - Voxel resolution (uM): {voxel_resolution}'
                                      + f' - Volume file: {nrrd_filepath.name}'
@@ -130,14 +144,16 @@ def load_ccf_annotation(ccf_id, version_name, voxel_resolution,
                  }
 
     with dj.conn().transaction:
-        CCF.insert1(ccf_entry)
-        BrainRegionAnnotation.insert1(ccf_key)
+        # added skip_dupes bc recieved duplicate errors even with fresh schema
+        CCF.insert1(ccf_entry, skip_duplicates=skip_duplicates)
+        BrainRegionAnnotation.insert1(ccf_key, skip_duplicates=skip_duplicates)
         BrainRegionAnnotation.BrainRegion.insert([
-            dict(ccf_key,
+            dict(ccf_id=ccf_id,
                  acronym=r.acronym,
                  region_id=r.id,
                  region_name=r.safe_name,
-                 color_code=r.color_hex_triplet) for _, r in ontology.iterrows()])
+                 color_code=r.color_hex_triplet) for _, r in ontology.iterrows()],
+            skip_duplicates=skip_duplicates)
 
         # Process voxels per brain region
         for idx, (region_id, r) in enumerate(ontology.iterrows()):
@@ -162,7 +178,11 @@ def load_ccf_annotation(ccf_id, version_name, voxel_resolution,
             vol['ccf_id'] = [ccf_key['ccf_id']] * len(vol)
             CCF.Voxel.insert(vol)
 
-            vol['acronym'] = [r.safe_name] * len(vol)
-            BrainRegionAnnotation.Voxel.insert(vol)
+            vol['acronym'] = [r.acronym] * len(vol)
+            BrainRegionAnnotation.Voxel.insert(vol, skip_duplicates=skip_duplicates)
 
     log.info('.. done.')
+
+
+def load_parent_regions(ccf_id):
+    raise NotImplementedError('Coming soon')

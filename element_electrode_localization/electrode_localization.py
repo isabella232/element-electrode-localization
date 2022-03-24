@@ -97,11 +97,12 @@ class ElectrodePosition(dj.Imported):
 
         electrodes_query = (probe.ProbeType.Electrode * probe.Probe * ProbeInsertion
                             & key)
+        probe_type = electrodes_query.fetch('probe_type', limit=1)[0]
 
         shanks = np.unique(electrodes_query.fetch('shank'))
 
         if len(channel_locations_files) == 1:
-            corresponding_shanks = [1]
+            corresponding_shanks = [1]  # ERROR - for subject6, shanks are 0_indexed
             if len(shanks) != 1:
                 raise ValueError(
                     'Only 1 file found ({}) for a {}-shank probe'.format(
@@ -196,7 +197,8 @@ class ElectrodePosition(dj.Imported):
             for electrode, x, y, z in zip(probe_electrodes[rec_to_elec_idx
                                                            ]['electrode'],
                                           pos_xyz[:, 0], pos_xyz[:, 1], pos_xyz[:, 2]):
-                entry = {**key, 'electrode': electrode, 'x': x, 'y': y, 'z': z}
+                entry = {**key, 'electrode': electrode, 'x': x, 'y': y, 'z': z,
+                         probe_type: probe_type}
                 try:
                     self.Electrode.insert1(entry)
                 except dj.DataJointError as e:
