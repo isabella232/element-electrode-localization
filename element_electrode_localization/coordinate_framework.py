@@ -1,6 +1,6 @@
 import logging
 import pathlib
-
+from tqdm import tqdm
 import datajoint as dj
 import pandas as pd
 import numpy as np
@@ -19,7 +19,6 @@ def activate(schema_name, *, create_schema=True, create_tables=True):
         :param create_tables: when True (default), create tables in the database if they do not yet exist.
     """
     schema.activate(schema_name, create_schema=create_schema, create_tables=create_tables)
-    dj.conn().query(f'ALTER DATABASE `{schema_name}` CHARACTER SET utf8 COLLATE utf8_bin;')
 
 
 @schema
@@ -106,6 +105,12 @@ def load_ccf_annotation(ccf_id, version_name, voxel_resolution,
     ontology_csv_filepath = pathlib.Path(ontology_csv_filepath)
 
     ontology = pd.read_csv(ontology_csv_filepath)
+
+    def to_snake_case(s):
+        return re.sub(r'(?<!^)(?=[A-Z])', '_', x).lower()
+
+    ontology.acronym.apply(to_snake_case)
+
     stack, hdr = nrrd.read(nrrd_filepath.as_posix())  # AP (x), DV (y), ML (z)
 
     log.info('.. loaded atlas brain volume of shape {} from {}'
@@ -130,7 +135,7 @@ def load_ccf_annotation(ccf_id, version_name, voxel_resolution,
                  color_code=r.color_hex_triplet) for _, r in ontology.iterrows()])
 
         # Process voxels per brain region
-        for idx, (region_id, r) in enumerate(ontology.iterrows()):
+        for idx, (region_id, r) in tqdm(enumerate(ontology.iterrows())):
             dj.conn().ping()
             region_id = int(region_id)
 
@@ -152,7 +157,7 @@ def load_ccf_annotation(ccf_id, version_name, voxel_resolution,
             vol['ccf_id'] = [ccf_key['ccf_id']] * len(vol)
             CCF.Voxel.insert(vol)
 
-            vol['acronym'] = [r.safe_name] * len(vol)
+            vol['acronym'] = [r.acronym] * len(vol)
             BrainRegionAnnotation.Voxel.insert(vol)
 
     log.info('.. done.')
