@@ -116,16 +116,16 @@ def load_ccf_annotation(ccf_id, version_name, voxel_resolution,
     ontology = pd.read_csv(ontology_csv_filepath)
     stack, hdr = nrrd.read(nrrd_filepath.as_posix())  # AP (x), DV (y), ML (z)
 
-    log.info('.. loaded atlas brain volume of shape {} from {}'
-             .format(stack.shape, nrrd_filepath))
+    log.info('.. loaded atlas brain volume of shape '
+             + f'{stack.shape} from {nrrd_filepath}')
 
     ccf_key = {'ccf_id': ccf_id}
     ccf_entry = {**ccf_key,
                  'ccf_version': version_name,
-                 'ccf_description': f'Version: {version_name}'
-                                    f' - Voxel resolution (uM): {voxel_resolution}'
-                                    f' - Volume file: {nrrd_filepath.name}'
-                                    (' - Region ontology file: '
+                 'ccf_description': (f'Version: {version_name}'
+                                     + f' - Voxel resolution (uM): {voxel_resolution}'
+                                     + f' - Volume file: {nrrd_filepath.name}'
+                                     + ' - Region ontology file: '
                                      + ontology_csv_filepath.name)
                  }
 
