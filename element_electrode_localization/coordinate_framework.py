@@ -106,7 +106,7 @@ def load_ccf_annotation(ccf_id, version_name, voxel_resolution,
     ontology_csv_filepath = pathlib.Path(ontology_csv_filepath)
 
     def to_snake_case(s):
-        return re.sub(r'(?<!^)(?=[A-Z])', '_', x).lower()
+        return re.sub(r'(?<!^)(?=[A-Z])', '_', s).lower()
 
     ontology = pd.read_csv(ontology_csv_filepath)
     ontology.acronym.apply(to_snake_case)
