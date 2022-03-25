@@ -88,7 +88,7 @@ class ElectrodePosition(dj.Imported):
         """
 
     def make(self, key):
-        voxel_resolution = (coordinate_framework.CCF & key).fetch1('voxel_resolution')
+        voxel_resolution = (coordinate_framework.CCF & key).fetch1('ccf_resolution')
         electrode_location_dir = pathlib.Path(get_electrode_localization_dir(key))
         assert electrode_location_dir.exists()
 
@@ -102,7 +102,7 @@ class ElectrodePosition(dj.Imported):
         shanks = np.unique(electrodes_query.fetch('shank'))
 
         if len(channel_locations_files) == 1:
-            corresponding_shanks = [1]  # ERROR - for subject6, shanks are 0_indexed
+            corresponding_shanks = [0]
             if len(shanks) != 1:
                 raise ValueError(
                     'Only 1 file found ({}) for a {}-shank probe'.format(
