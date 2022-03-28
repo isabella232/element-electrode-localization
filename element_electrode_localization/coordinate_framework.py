@@ -36,7 +36,7 @@ class CCF(dj.Lookup):
     ccf_id            : int             # CCF ID, a.k.a atlas ID
     ---
     ccf_version       : varchar(64)     # Allen CCF Version - e.g. CCFv3
-    ccf_resolution    : varchar(4)      # voxel resolution in micron
+    ccf_resolution    : float           # voxel resolution in micron
     ccf_description='': varchar(255)    # CCFLabel Description
     """
 
@@ -103,8 +103,7 @@ class ParentBrainRegion(dj.Lookup):
 
 
 def load_ccf_annotation(ccf_id, version_name, voxel_resolution,
-                        nrrd_filepath, ontology_csv_filepath,
-                        skip_duplicates=False):
+                        nrrd_filepath, ontology_csv_filepath):
     """
     :param ccf_id: unique id to identify a new CCF dataset to be inserted
     :param version_name: CCF version
@@ -155,16 +154,14 @@ def load_ccf_annotation(ccf_id, version_name, voxel_resolution,
                  }
 
     with dj.conn().transaction:
-        # added skip_dupes bc recieved duplicate errors even with fresh schema
-        CCF.insert1(ccf_entry, skip_duplicates=skip_duplicates)
-        BrainRegionAnnotation.insert1(ccf_key, skip_duplicates=skip_duplicates)
+        CCF.insert1(ccf_entry)
+        BrainRegionAnnotation.insert1(ccf_key)
         BrainRegionAnnotation.BrainRegion.insert([
             dict(ccf_id=ccf_id,
                  acronym=to_snake_case(r.acronym),
                  region_id=r.id,
                  region_name=r.safe_name,
-                 color_code=r.color_hex_triplet) for _, r in ontology.iterrows()],
-            skip_duplicates=skip_duplicates)
+                 color_code=r.color_hex_triplet) for _, r in ontology.iterrows()])
 
         # Process voxels per brain region
         for idx, (region_id, r) in enumerate(tqdm(ontology.iterrows())):

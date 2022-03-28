@@ -45,9 +45,9 @@ To activate the `element-electrode-localization`, ones need to provide:
       root.
 
 For more details, check the docstring of the `element-electrode-localization`:
-
+```python
     help(electrode.activate)
-
+```
 ### Example usage
 
 See the [workflow-array-ephys project](https://github.com/datajoint/workflow-array-ephys) for an example usage of this Element.

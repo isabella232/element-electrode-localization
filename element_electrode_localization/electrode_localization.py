@@ -198,7 +198,7 @@ class ElectrodePosition(dj.Imported):
                                                            ]['electrode'],
                                           pos_xyz[:, 0], pos_xyz[:, 1], pos_xyz[:, 2]):
                 entry = {**key, 'electrode': electrode, 'x': x, 'y': y, 'z': z,
-                         probe_type: probe_type}
+                         'probe_type': probe_type}
                 try:
                     self.Electrode.insert1(entry)
                 except dj.DataJointError as e:
