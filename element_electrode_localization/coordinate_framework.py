@@ -190,7 +190,7 @@ def load_ccf_annotation(ccf_id, version_name, voxel_resolution,
             CCF.Voxel.insert(vol)
 
             vol['acronym'] = [to_snake_case(r.acronym)] * len(vol)
-            BrainRegionAnnotation.Voxel.insert(vol, skip_duplicates=skip_duplicates)
+            BrainRegionAnnotation.Voxel.insert(vol)
 
     log.info('.. done.')
 

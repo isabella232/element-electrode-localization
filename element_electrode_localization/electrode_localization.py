@@ -97,7 +97,7 @@ class ElectrodePosition(dj.Imported):
 
         electrodes_query = (probe.ProbeType.Electrode * probe.Probe * ProbeInsertion
                             & key)
-        probe_type = electrodes_query.fetch('probe_type', limit=1)[0]
+        probe_type = (probe.Probe * ProbeInsertion & key).fetch1('probe_type')
 
         shanks = np.unique(electrodes_query.fetch('shank'))
 
