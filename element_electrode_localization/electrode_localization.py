@@ -204,8 +204,8 @@ class ElectrodePosition(dj.Imported):
                 try:
                     self.Electrode.insert1(entry)
                 except dj.IntegrityError as e:
-                    skipped_electrode_count = skipped_electrode_count + 1
+                    skipped_electrode_count += 1
                     log.warning('...... ElectrodePositionError at X='
                                 + f'{x}, Y={y}, Z={z}:\n {repr(e)}')
         if skipped_electrode_count > 0:
-            print(f'Skipped {skipped_electrode_count} electrodes for \n\t{key}')
+            log.info(f'Skipped {skipped_electrode_count} electrodes for \n\t{key}')
