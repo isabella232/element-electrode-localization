@@ -88,6 +88,7 @@ class ElectrodePosition(dj.Imported):
         """
 
     def make(self, key):
+        skipped_electrode_count = 0
         voxel_resolution = (coordinate_framework.CCF & key).fetch1('ccf_resolution')
         electrode_location_dir = pathlib.Path(get_electrode_localization_dir(key))
         assert electrode_location_dir.exists()
@@ -158,8 +159,9 @@ class ElectrodePosition(dj.Imported):
             pos_xyz = np.copy(pos_xyz_raw)
 
             # by adjusting xyz axes & offsetting from origin position
-            pos_xyz[:, 0] = pos_origin[0] + pos_xyz_raw[:, 0]
-            pos_xyz[:, 1] = pos_origin[1] - pos_xyz_raw[:, 1]
+            # in "pos_xyz_raw", x-axis and y-axis are swapped, correcting for that below
+            pos_xyz[:, 0] = pos_origin[1] - pos_xyz_raw[:, 1]
+            pos_xyz[:, 1] = pos_origin[0] + pos_xyz_raw[:, 0]
             pos_xyz[:, 2] = pos_origin[2] - pos_xyz_raw[:, 2]
 
             # and quantizing to CCF voxel resolution;
@@ -201,6 +203,9 @@ class ElectrodePosition(dj.Imported):
                          'probe_type': probe_type}
                 try:
                     self.Electrode.insert1(entry)
-                except dj.DataJointError as e:
-                    log.warning('...... ElectrodePositionError: {}'.format(
-                        repr(e)))
+                except dj.IntegrityError as e:
+                    skipped_electrode_count = skipped_electrode_count + 1
+                    log.warning('...... ElectrodePositionError at X='
+                                + f'{x}, Y={y}, Z={z}:\n {repr(e)}')
+        if skipped_electrode_count > 0:
+            print(f'Skipped {skipped_electrode_count} electrodes for \n\t{key}')
