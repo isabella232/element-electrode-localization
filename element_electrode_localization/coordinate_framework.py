@@ -1,12 +1,13 @@
 import logging
 import pathlib
-
+from tqdm import tqdm
 import datajoint as dj
 import pandas as pd
 import numpy as np
 from tqdm import tqdm
 import nrrd
 import re
+
 
 log = logging.getLogger(__name__)
 schema = dj.schema()
@@ -24,10 +25,8 @@ def activate(schema_name, *, create_schema=True, create_tables=True):
     """
     schema.activate(schema_name, create_schema=create_schema,
                     create_tables=create_tables)
-    # dj.conn().query(f'ALTER DATABASE `{schema_name}` CHARACTER SET utf8 COLLATE '
-    #                 + 'utf8_bin;')
 
-# ----------------------------- Table declarations ----------------------
+    # ----------------------------- Table declarations ----------------------
 
 
 @schema
@@ -135,7 +134,6 @@ def load_ccf_annotation(ccf_id, version_name, voxel_resolution,
         return re.sub(r'(?<!^)(?=[A-Z])', '_', s).lower()
 
     ontology = pd.read_csv(ontology_csv_filepath)
-    # ontology.acronym.apply(to_snake_case)
 
     stack, hdr = nrrd.read(nrrd_filepath.as_posix())  # AP (x), DV (y), ML (z)
 
