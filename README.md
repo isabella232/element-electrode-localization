@@ -1,8 +1,10 @@
 # DataJoint Element - Electrode Localization
 
-This repository is currently a work in progress.
++ This repository is currently a work in progress.
 
-See [Background](Background.md) for the background information and development timeline.
++ See the [Element Electrode Localization documentation](https://elements.datajoint.org/description/electrode_localization/) for the background information and development timeline.
+
++ For more information on the DataJoint Elements project, please visit https://elements.datajoint.org.  This work is supported by the National Institutes of Health.
 
 ## Element architecture
 <!-- ![element-electrode-localization](https://github.com/datajoint/element-electrode-localization/blob/main/images/diagram_electrode-localization.svg) -->
