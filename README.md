@@ -1,6 +1,16 @@
 # DataJoint Element - Electrode Localization
 
-+ This repository is currently a work in progress.
++ This repository features a DataJoint pipeline design for localizing the Neuropixels 
+electrodes within the 
+[Allen Mouse Common Coordinate Framework (CCF)](http://atlas.brain-map.org).
+
++ The pipeline presented here is not a complete pipeline by itself, but rather a 
+modular design of tables and dependencies specific to the electrode localization 
+workflow. 
+
++ This modular pipeline element can be flexibly attached downstream 
+to any particular design of an array electrophysiology pipeline, thus assembling a 
+fully functional electrode localization pipeline.
 
 + See the [Element Electrode Localization documentation](https://elements.datajoint.org/description/electrode_localization/) for the background information and development timeline.
 
@@ -8,6 +18,7 @@
 
 ## Element architecture
 <!-- ![element-electrode-localization](https://github.com/datajoint/element-electrode-localization/blob/main/images/diagram_electrode-localization.svg) -->
+
 ## Installation
 
 + Install `element-electrode-localization`
