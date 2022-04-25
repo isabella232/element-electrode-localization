@@ -4,6 +4,7 @@ from tqdm import tqdm
 import datajoint as dj
 import pandas as pd
 import numpy as np
+from tqdm import tqdm
 import nrrd
 import re
 
@@ -15,19 +16,26 @@ schema = dj.schema()
 def activate(schema_name, *, create_schema=True, create_tables=True):
     """
     activate(schema_name, create_schema=True, create_tables=True)
-        :param schema_name: schema name on the database server to activate the `coordinate_framework` element
-        :param create_schema: when True (default), create schema in the database if it does not yet exist.
-        :param create_tables: when True (default), create tables in the database if they do not yet exist.
+        :param schema_name: schema name on the database server to activate the
+                            `coordinate_framework` element
+        :param create_schema: when True (default), create schema in the database if it
+                              does not yet exist.
+        :param create_tables: when True (default), create tables in the database if
+                              they do not yet exist.
     """
-    schema.activate(schema_name, create_schema=create_schema, create_tables=create_tables)
+    schema.activate(schema_name, create_schema=create_schema,
+                    create_tables=create_tables)
+
+    # ----------------------------- Table declarations ----------------------
 
 
 @schema
 class CCF(dj.Lookup):
     definition = """  # Common Coordinate Framework
-    ccf_id:             int             # CCF ID
+    ccf_id            : int             # CCF ID, a.k.a atlas ID
     ---
-    ccf_version:        varchar(64)     # Allen CCF Version - e.g. CCFv3
+    ccf_version       : varchar(64)     # Allen CCF Version - e.g. CCFv3
+    ccf_resolution    : float           # voxel resolution in micron
     ccf_description='': varchar(255)    # CCFLabel Description
     """
 
@@ -63,10 +71,27 @@ class BrainRegionAnnotation(dj.Lookup):
         -> CCF.Voxel
         """
 
+    @classmethod
+    def retrieve_acronym(self, acronym):
+        """ Retrieve the DataJoint translation of the CCF acronym"""
+        return re.sub(r'(?<!^)(?=[A-Z])', '_', acronym).lower()
+
+    @classmethod
+    def voxel_query(self, x=None, y=None, z=None):
+        """Given one or more coordinates, return unique brain regions
+        :param x: x coordinate
+        :param y: y coordinate
+        :param z: z coordinate
+        """
+        if not any(x, y, z):
+            raise ValueError('Must specify at least one dimension')
+        # query = self.Voxel  #  TODO: add utility function name lookup
+        raise NotImplementedError('Coming soon')
+
 
 @schema
 class ParentBrainRegion(dj.Lookup):
-    definition = """ # Hierarchical structure between the brain regions
+    definition = """ # Hierarchical structure between the brain regionss
     -> BrainRegionAnnotation.BrainRegion
     ---
     -> BrainRegionAnnotation.BrainRegion.proj(parent='acronym')
@@ -109,33 +134,35 @@ def load_ccf_annotation(ccf_id, version_name, voxel_resolution,
         return re.sub(r'(?<!^)(?=[A-Z])', '_', s).lower()
 
     ontology = pd.read_csv(ontology_csv_filepath)
-    ontology.acronym.apply(to_snake_case)
 
     stack, hdr = nrrd.read(nrrd_filepath.as_posix())  # AP (x), DV (y), ML (z)
 
-    log.info('.. loaded atlas brain volume of shape {} from {}'
-             .format(stack.shape, nrrd_filepath))
+    log.info('.. loaded atlas brain volume of shape '
+             + f'{stack.shape} from {nrrd_filepath}')
 
     ccf_key = {'ccf_id': ccf_id}
     ccf_entry = {**ccf_key,
                  'ccf_version': version_name,
-                 'ccf_description': f'Version: {version_name}'
-                                    f' - Voxel resolution (uM): {voxel_resolution}'
-                                    f' - Volume file: {nrrd_filepath.name}'
-                                    f' - Region ontology file: {ontology_csv_filepath.name}'}
+                 'ccf_resolution': voxel_resolution,
+                 'ccf_description': (f'Version: {version_name}'
+                                     + f' - Voxel resolution (uM): {voxel_resolution}'
+                                     + f' - Volume file: {nrrd_filepath.name}'
+                                     + ' - Region ontology file: '
+                                     + ontology_csv_filepath.name)
+                 }
 
     with dj.conn().transaction:
         CCF.insert1(ccf_entry)
         BrainRegionAnnotation.insert1(ccf_key)
         BrainRegionAnnotation.BrainRegion.insert([
-            dict(ccf_key,
-                 acronym=r.acronym,
+            dict(ccf_id=ccf_id,
+                 acronym=to_snake_case(r.acronym),
                  region_id=r.id,
                  region_name=r.safe_name,
                  color_code=r.color_hex_triplet) for _, r in ontology.iterrows()])
 
         # Process voxels per brain region
-        for idx, (region_id, r) in tqdm(enumerate(ontology.iterrows())):
+        for idx, (region_id, r) in enumerate(tqdm(ontology.iterrows())):
             dj.conn().ping()
             region_id = int(region_id)
 
@@ -157,7 +184,11 @@ def load_ccf_annotation(ccf_id, version_name, voxel_resolution,
             vol['ccf_id'] = [ccf_key['ccf_id']] * len(vol)
             CCF.Voxel.insert(vol)
 
-            vol['acronym'] = [r.acronym] * len(vol)
+            vol['acronym'] = [to_snake_case(r.acronym)] * len(vol)
             BrainRegionAnnotation.Voxel.insert(vol)
 
     log.info('.. done.')
+
+
+def load_parent_regions(ccf_id):
+    raise NotImplementedError('Coming soon')
