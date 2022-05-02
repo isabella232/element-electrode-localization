@@ -131,7 +131,7 @@ class ElectrodePosition(dj.Imported):
 
             chn_loc_data = {'origin': chn_loc_raw['origin']}
 
-            if len(chn_loc_data['origin'].keys()) > 1:
+            if len(chn_loc_data['origin']) > 1:
                 log.error('More than one origin region found ({}). skipping.'.format(
                     chn_loc_data['origin']))
                 raise ValueError('More than one origin region found '
@@ -139,11 +139,11 @@ class ElectrodePosition(dj.Imported):
 
             # ensuring channel data is sorted;
             chn_loc_keymap = {int(k.split('_')[1]): k for k
-                              in chn_loc_raw.keys() if 'channel_' in k}
+                              in chn_loc_raw if 'channel_' in k}
 
             chn_loc_data['channels'] = np.array(
                 [tuple(chn_loc_raw[chn_loc_keymap[k]].values()) for k in sorted(
-                    chn_loc_keymap.keys())],
+                    chn_loc_keymap)],
                 dtype=[
                     ('x', float), ('y', float), ('z', float),
                     ('axial', float), ('lateral', float),
@@ -153,8 +153,7 @@ class ElectrodePosition(dj.Imported):
             pos_xyz_raw = np.array([chn_loc_data['channels'][i]
                                     for i in ('x', 'y', 'z')]).T
 
-            pos_origin = chn_loc_data['origin'][
-                list(chn_loc_data['origin'].keys())[0]]
+            pos_origin = next(iter(chn_loc_data['origin'].values()))
 
             pos_xyz = np.copy(pos_xyz_raw)
 
