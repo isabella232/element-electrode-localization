@@ -43,6 +43,11 @@ fully functional electrode localization pipeline.
 
 ## Usage
 
+### Video Tutorial
+
+[![DataJoint Element Video Tutorial](https://img.youtube.com/vi/YRXokFHkLGg/0.jpg)](https://www.youtube.com/watch?v=YRXokFHkLGg)
+
+
 ### Element activation
 
 To activate the `element-electrode-localization`, ones need to provide:
