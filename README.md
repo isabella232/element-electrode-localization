@@ -17,7 +17,8 @@ fully functional electrode localization pipeline.
 + For more information on the DataJoint Elements project, please visit https://elements.datajoint.org.  This work is supported by the National Institutes of Health.
 
 ## Element architecture
-<!-- ![element-electrode-localization](https://github.com/datajoint/element-electrode-localization/blob/main/images/diagram_electrode-localization.svg) -->
+
+![element electrode localization diagram](images/diagram_electrode_localization.svg)
 
 ## Installation
 
