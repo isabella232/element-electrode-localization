@@ -33,7 +33,8 @@ fully functional electrode localization pipeline.
 
 + Install `element-interface`
 
-    + `element-interface` is a dependency of `element-electrode-localization`, however it is not contained within `requirements.txt`.
+    + `element-interface` is a dependency of `element-electrode-localization`, however
+      it is not contained within `requirements.txt`.
      
     ```
     pip install "element-interface @ git+https://github.com/datajoint/element-interface"
@@ -53,12 +54,13 @@ To activate the `element-electrode-localization`, ones need to provide:
 
 3. Utility functions. See [example definitions](https://github.com/datajoint/workflow-array-ephys/blob/main/workflow_array_ephys/paths.py).
     + get_ephys_root_data_dir(): Returns your root data directory.
-    + get_session_directory(): Returns the path of the session data relative to the root.
+    + get_session_directory(): Returns the path of the session data relative to the
+      root.
 
 For more details, check the docstring of the `element-electrode-localization`:
-
+```python
     help(electrode.activate)
-
+```
 ### Example usage
 
 See the [workflow-array-ephys project](https://github.com/datajoint/workflow-array-ephys) for an example usage of this Element.
