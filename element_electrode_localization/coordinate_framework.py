@@ -23,8 +23,9 @@ def activate(schema_name, *, create_schema=True, create_tables=True):
         :param create_tables: when True (default), create tables in the database if
                               they do not yet exist.
     """
-    schema.activate(schema_name, create_schema=create_schema,
-                    create_tables=create_tables)
+    schema.activate(
+        schema_name, create_schema=create_schema, create_tables=create_tables
+    )
 
     # ----------------------------- Table declarations ----------------------
 
@@ -73,8 +74,8 @@ class BrainRegionAnnotation(dj.Lookup):
 
     @classmethod
     def retrieve_acronym(self, acronym):
-        """ Retrieve the DataJoint translation of the CCF acronym"""
-        return re.sub(r'(?<!^)(?=[A-Z])', '_', acronym).lower()
+        """Retrieve the DataJoint translation of the CCF acronym"""
+        return re.sub(r"(?<!^)(?=[A-Z])", "_", acronym).lower()
 
     @classmethod
     def voxel_query(self, x=None, y=None, z=None):
@@ -84,9 +85,9 @@ class BrainRegionAnnotation(dj.Lookup):
         :param z: z coordinate
         """
         if not any(x, y, z):
-            raise ValueError('Must specify at least one dimension')
+            raise ValueError("Must specify at least one dimension")
         # query = self.Voxel  #  TODO: add utility function name lookup
-        raise NotImplementedError('Coming soon')
+        raise NotImplementedError("Coming soon")
 
 
 @schema
@@ -101,8 +102,9 @@ class ParentBrainRegion(dj.Lookup):
 # ---- HELPERS ----
 
 
-def load_ccf_annotation(ccf_id, version_name, voxel_resolution,
-                        nrrd_filepath, ontology_csv_filepath):
+def load_ccf_annotation(
+    ccf_id, version_name, voxel_resolution, nrrd_filepath, ontology_csv_filepath
+):
     """
     :param ccf_id: unique id to identify a new CCF dataset to be inserted
     :param version_name: CCF version
@@ -122,73 +124,88 @@ def load_ccf_annotation(ccf_id, version_name, voxel_resolution,
     https://community.brain-map.org/t/allen-mouse-ccf-accessing-and-using-related-data-and-tools/359
     (particularly the ontology file downloadable as CSV)
     """
-    ccf_key = {'ccf_id': ccf_id}
+    ccf_key = {"ccf_id": ccf_id}
     if CCF & ccf_key:
-        print(f'CCF ID {ccf_id} already exists!')
+        print(f"CCF ID {ccf_id} already exists!")
         return
 
     nrrd_filepath = pathlib.Path(nrrd_filepath)
     ontology_csv_filepath = pathlib.Path(ontology_csv_filepath)
 
     def to_snake_case(s):
-        return re.sub(r'(?<!^)(?=[A-Z])', '_', s).lower()
+        return re.sub(r"(?<!^)(?=[A-Z])", "_", s).lower()
 
     ontology = pd.read_csv(ontology_csv_filepath)
 
     stack, hdr = nrrd.read(nrrd_filepath.as_posix())  # AP (x), DV (y), ML (z)
 
-    log.info('.. loaded atlas brain volume of shape '
-             + f'{stack.shape} from {nrrd_filepath}')
+    log.info(
+        ".. loaded atlas brain volume of shape " + f"{stack.shape} from {nrrd_filepath}"
+    )
 
-    ccf_key = {'ccf_id': ccf_id}
-    ccf_entry = {**ccf_key,
-                 'ccf_version': version_name,
-                 'ccf_resolution': voxel_resolution,
-                 'ccf_description': (f'Version: {version_name}'
-                                     + f' - Voxel resolution (uM): {voxel_resolution}'
-                                     + f' - Volume file: {nrrd_filepath.name}'
-                                     + ' - Region ontology file: '
-                                     + ontology_csv_filepath.name)
-                 }
+    ccf_key = {"ccf_id": ccf_id}
+    ccf_entry = {
+        **ccf_key,
+        "ccf_version": version_name,
+        "ccf_resolution": voxel_resolution,
+        "ccf_description": (
+            f"Version: {version_name}"
+            + f" - Voxel resolution (uM): {voxel_resolution}"
+            + f" - Volume file: {nrrd_filepath.name}"
+            + " - Region ontology file: "
+            + ontology_csv_filepath.name
+        ),
+    }
 
     with dj.conn().transaction:
         CCF.insert1(ccf_entry)
         BrainRegionAnnotation.insert1(ccf_key)
-        BrainRegionAnnotation.BrainRegion.insert([
-            dict(ccf_id=ccf_id,
-                 acronym=to_snake_case(r.acronym),
-                 region_id=r.id,
-                 region_name=r.safe_name,
-                 color_code=r.color_hex_triplet) for _, r in ontology.iterrows()])
+        BrainRegionAnnotation.BrainRegion.insert(
+            [
+                dict(
+                    ccf_id=ccf_id,
+                    acronym=to_snake_case(r.acronym),
+                    region_id=r.id,
+                    region_name=r.safe_name,
+                    color_code=r.color_hex_triplet,
+                )
+                for _, r in ontology.iterrows()
+            ]
+        )
 
         # Process voxels per brain region
         for idx, (region_id, r) in enumerate(tqdm(ontology.iterrows())):
             dj.conn().ping()
             region_id = int(region_id)
 
-            log.info('.. loading region {} ({}/{}) ({})'
-                     .format(region_id, idx, len(ontology), r.safe_name))
+            log.info(
+                ".. loading region {} ({}/{}) ({})".format(
+                    region_id, idx, len(ontology), r.safe_name
+                )
+            )
 
             # extracting filled volumes from stack in scaled [[x,y,z]] shape,
-            vol = (np.array(np.where(stack == region_id)).T * voxel_resolution)
-            vol = pd.DataFrame(vol, columns=['x', 'y', 'z'])
+            vol = np.array(np.where(stack == region_id)).T * voxel_resolution
+            vol = pd.DataFrame(vol, columns=["x", "y", "z"])
 
             if not vol.shape[0]:
-                log.info('.. region {} volume: shape {} - skipping'
-                         .format(region_id, vol.shape))
+                log.info(
+                    ".. region {} volume: shape {} - skipping".format(
+                        region_id, vol.shape
+                    )
+                )
                 continue
             else:
-                log.info('.. region {} volume: shape {}'.format(
-                    region_id, vol.shape))
+                log.info(".. region {} volume: shape {}".format(region_id, vol.shape))
 
-            vol['ccf_id'] = [ccf_key['ccf_id']] * len(vol)
+            vol["ccf_id"] = [ccf_key["ccf_id"]] * len(vol)
             CCF.Voxel.insert(vol)
 
-            vol['acronym'] = [to_snake_case(r.acronym)] * len(vol)
+            vol["acronym"] = [to_snake_case(r.acronym)] * len(vol)
             BrainRegionAnnotation.Voxel.insert(vol)
 
-    log.info('.. done.')
+    log.info(".. done.")
 
 
 def load_parent_regions(ccf_id):
-    raise NotImplementedError('Coming soon')
+    raise NotImplementedError("Coming soon")
