@@ -23,6 +23,10 @@ The Element's table architecture was generalized from existing project-specific 
 
 One notable consession was made in development: acronyms in DataJoint do not perfectly map on to the Allen Institute's published standard. By default, DataJoint databases are not case sensitive. Instead, acronyms are convered to [snake case](https://en.wikipedia.org/wiki/Snake_case) to avoid naming collisions. While we depart from the standard, preliminary interviews with users indicate no bias toward the official standard. Visit our [localization notebook](https://github.com/datajoint/workflow-array-ephys/blob/main/notebooks/08-electrode-localization.ipynb) for a demonstration of converting between the case sensitive and snake case standards. 
 
+## Roadmap
+
+Further development of this Element is community driven. Upon user requests we will continue adding features to this Element.
+
 ## References
 
 [1]: Lein, E. S., Hawrylycz, M. J., Ao, N., Ayres, M., Bensinger, A., Bernard, A., ... & Jones, A. R. (2007). Genome-wide atlas of gene expression in the adult mouse brain. *Nature*, 445(7124), 168-176.
