@@ -4,7 +4,9 @@
 
 Studies of brain anatomy and cellular morphology were once confined to single-subject studies wherein in vitro slices were compared to develop a complete model of the brain. With dyes, researchers could compare recordings to the reconstructed location of a given recording device. Through clever experimental design, researchers could further associate highly localized regions to their task-dependent function. Advances in 3D modeling have permitted parallel advances in multi-subject averaged anatomical models. An atlas serves as a shared reference frame for a given species. [The Allen Institute](https://mouse.brain-map.org/) has been a leader in the development of mouse atlases since 2007<sup>[1](#references)</sup>, with regular updates<sup>[2](#references)</sup> that provide researchers with a shared reference frame in the study of functional neuroanatomy.
 
-## Table Architecture
+## Element Architecture
+
+Each of the DataJoint Elements are a set of tables for common neuroinformatics modalities to organize, preprocess, and analyze data. Each node in the following diagram is either a table in the Element itself or a table that would be connected to the Element.
 
 ![element-electrode-localization diagram](https://raw.githubusercontent.com/datajoint/element-electrode-localization/main/images/diagram_electrode_localization.svg)
 
