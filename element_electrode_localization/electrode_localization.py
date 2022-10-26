@@ -24,24 +24,14 @@ def activate(
     create_tables=True,
     linking_module=None,
 ):
-    """
-    activate(electrode_localization_schema_name, coordinate_framework_schema_name=None,
-             *, create_schema=True, create_tables=True, linking_module=None)
-        :param electrode_localization_schema_name: schema name on the database server to
-                                           activate the `electrode_localization` element
-        :param coordinate_framework_schema_name: schema name on the database server to
-                                            activate the `coordinate_framework` element.
-                                            May be omitted if already activated
-        :param create_schema: when True (default), create schema in the database if it
-                              does not yet exist.
-        :param create_tables: when True (default), create tables in the database if they
-                              do not yet exist.
-        :param linking_module: a module name or a module containing the
-         required dependencies to activate the `electrode_localization` element:
-            Upstream tables:
-                + ProbeInsertion: table referenced by ElectrodePosition, typically
-                                  identifying a Probe Insertion instance
-                + probe: the probe schema - from element-array-ephys
+    """Activates the `electrode_localization` and `coordinate_framework` schemas. 
+
+    Args:
+        electrode_localization_schema_name (str): A string containing the name of the electrode_localization schema.
+        coordinate_framework_schema_name (str): A string containing the name of the coordinate_framework scehma.
+        create_schema (bool): If True, schema will be created in the database.
+        create_tables (bool): If True, tables related to the schema will be created in the database.
+        linking_module (str): A string containing the module name or module containing the required dependencies to activate the schema.
     """
 
     if isinstance(linking_module, str):
@@ -73,12 +63,14 @@ def activate(
 
 
 def get_electrode_localization_dir(probe_insertion_key: dict) -> str:
-    """
-    Retrieve the electrode localization directory associated with a ProbeInsertion
-        The directory should contain `channel_locations.json` files (one per shank)
-        for the corresponding `probe_insertion_key`
-    :param probe_insertion_key: key of a ProbeInsertion
-    :return: full file-path of the electrode localization dir
+    """Retrieve the electrode localization directory associated with a ProbeInsertion.
+
+    The directory should contain `channel_locations.json` files (one per shank)for the corresponding `probe_insertion_key`.
+    
+    Args:
+        probe_insertion_key (dict): key of a ProbeInsertion
+    Returns:
+    Pathlib.Path: full file-path of the electrode localization dir
     """
     return _linking_module.get_electrode_localization_dir(probe_insertion_key)
 
@@ -88,12 +80,25 @@ def get_electrode_localization_dir(probe_insertion_key: dict) -> str:
 
 @schema
 class ElectrodePosition(dj.Imported):
+    """Electrode position information for a probe insertion.
+
+    Attributes:
+        ProbeInsertion (foreign key): ProbeInsertion primary key.
+        coodinate_framework.CCF (foreign key): coordinate_framework.CCF primary key.
+    """
     definition = """
     -> ProbeInsertion
     -> coordinate_framework.CCF
     """
 
     class Electrode(dj.Part):
+        """Voxel information for a given electrode.
+
+        Attributes:
+            master (foreign key): ElectrodePosition primary key.
+            probe.ProbeType.Electrode (foreign key): probe.ProbeType.Electrode primary key.
+            coordinate_framework.CCF.Voxel (query): fetches Voxel information from coordinate_framework schema.
+        """
         definition = """
         -> master
         -> probe.ProbeType.Electrode
@@ -102,6 +107,8 @@ class ElectrodePosition(dj.Imported):
         """
 
     def make(self, key):
+        """Populates electrode position tables.
+        """
         skipped_electrode_count = 0
         voxel_resolution = (coordinate_framework.CCF & key).fetch1("ccf_resolution")
         electrode_location_dir = pathlib.Path(get_electrode_localization_dir(key))

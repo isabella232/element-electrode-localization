@@ -14,14 +14,12 @@ schema = dj.schema()
 
 
 def activate(schema_name, *, create_schema=True, create_tables=True):
-    """
-    activate(schema_name, create_schema=True, create_tables=True)
-        :param schema_name: schema name on the database server to activate the
-                            `coordinate_framework` element
-        :param create_schema: when True (default), create schema in the database if it
-                              does not yet exist.
-        :param create_tables: when True (default), create tables in the database if
-                              they do not yet exist.
+    """Activates the schema. 
+
+    Args:
+        schema_name (str): A string containing the name of the probe scehma.
+        create_schema (bool): If True, schema will be created in the database.
+        create_tables (bool): If True, tables related to the schema will be created in the database.
     """
     schema.activate(
         schema_name, create_schema=create_schema, create_tables=create_tables
@@ -32,6 +30,15 @@ def activate(schema_name, *, create_schema=True, create_tables=True):
 
 @schema
 class CCF(dj.Lookup):
+    """Common coordinate framework information.
+    
+    Attributes:
+        ccf_id (foreign key, int): CCF ID/atlas ID.
+        ccf_version (varchar(64) ): Allen CCF version.
+        ccf_resolution (float): Voxel resolution in microns.
+        ccf_description (varchar(255) ): CCF label descriptions.
+    """
+
     definition = """  # Common Coordinate Framework
     ccf_id            : int             # CCF ID, a.k.a atlas ID
     ---
@@ -41,6 +48,15 @@ class CCF(dj.Lookup):
     """
 
     class Voxel(dj.Part):
+        """CCF voxel coordinates.
+
+        Attributes:
+            master (foreign key): CCF primary key.
+            x (foreign key, int): Anterior-to-posterior axis (AP axis) in micrometers.
+            y (foreign key, int): Superior-to_inferior axis (DV axis) in micrometers.
+            z (foreign key, int): Left-to-right (ML axis) in micrometers.
+        """
+
         definition = """  # CCF voxel coordinates
         -> master
         x   :  int   # (um)  Anterior-to-Posterior (AP axis)
@@ -52,11 +68,26 @@ class CCF(dj.Lookup):
 
 @schema
 class BrainRegionAnnotation(dj.Lookup):
+    """Brain region annotation.
+
+    Attributes:
+        CCF (foreign key): CCF primary key.
+    """
     definition = """
     -> CCF
     """
 
     class BrainRegion(dj.Part):
+        """Brain region information.
+        
+        Attributes:
+            master (foreign key): BrainRegionAnnotion primary key.
+            acronym (foreign key, varchar(32) ): Brain region acronym.
+            region_name (varchar(128) ): Brain region full name.
+            region_id (int): Brain region ID.
+            color_code (varchar(6) ): Hexcode of the color code for this region. 
+        """
+
         definition = """
         -> master
         acronym: varchar(32)  # CHARACTER SET utf8 COLLATE utf8_bin
@@ -67,6 +98,12 @@ class BrainRegionAnnotation(dj.Lookup):
         """
 
     class Voxel(dj.Part):
+        """Voxel information from CCF.
+
+        Attributes:
+            master.BrainRegion (foreign key): BrainRegionAnnotation.BrainRegion primary key.
+            CCF.Voxel (foreign key): CCF.Voxel primary key.
+        """
         definition = """
         -> master.BrainRegion
         -> CCF.Voxel
@@ -80,9 +117,14 @@ class BrainRegionAnnotation(dj.Lookup):
     @classmethod
     def voxel_query(self, x=None, y=None, z=None):
         """Given one or more coordinates, return unique brain regions
-        :param x: x coordinate
-        :param y: y coordinate
-        :param z: z coordinate
+        
+        Args:
+            x (float): x coordinate.
+            y (float): y coordinate.
+            z (float): z coordinate.
+        Raises:
+            ValueError: Must specificy at least one dimension.
+            NotImplementedError: Coming soon.
         """
         if not any(x, y, z):
             raise ValueError("Must specify at least one dimension")
@@ -92,6 +134,13 @@ class BrainRegionAnnotation(dj.Lookup):
 
 @schema
 class ParentBrainRegion(dj.Lookup):
+    """Hierarchical structure between the brain regions.
+
+    Attributes:
+        BrainRegionAnnotation.BrainRegion (foreign key): BrainRegionAnnotation.BrainRegion primary key.
+        BrainRegionAnnotation.BrainRegion.proj(parent='acronym') (query): fetches brain region acronym
+    """
+
     definition = """ # Hierarchical structure between the brain regionss
     -> BrainRegionAnnotation.BrainRegion
     ---
@@ -105,24 +154,14 @@ class ParentBrainRegion(dj.Lookup):
 def load_ccf_annotation(
     ccf_id, version_name, voxel_resolution, nrrd_filepath, ontology_csv_filepath
 ):
-    """
-    :param ccf_id: unique id to identify a new CCF dataset to be inserted
-    :param version_name: CCF version
-    :param voxel_resolution: voxel resolution in micron
-    :param nrrd_filepath: path to the .nrrd file for the volume data
-    :param ontology_csv_filepath: path to the .csv file for the brain region ontology
+    """Load CCF annotation
 
-    load_ccf_annotation(
-        ccf_id=0, version_name='ccf_2017', voxel_resolution=10,
-        nrrd_filepath='./data/annotation_10.nrrd',
-        ontology_csv_filepath='./data/query.csv')
-
-    For an example Allen brain atlas for mouse, see:
-    http://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017
-
-    For the structure/ontology tree, see:
-    https://community.brain-map.org/t/allen-mouse-ccf-accessing-and-using-related-data-and-tools/359
-    (particularly the ontology file downloadable as CSV)
+    Args:
+        ccf_id (int): unique id to identify a new CCF dataset to be inserted.
+        version_name (str): CCF version.
+        voxel_resolution (float): voxel resolution in microns.
+        nrrd_filepath (str): path to the .nrrd file for the volume data.
+        ontology_csv_filepath (str): path to the .csv file for the brain region ontology.
     """
     ccf_key = {"ccf_id": ccf_id}
     if CCF & ccf_key:
