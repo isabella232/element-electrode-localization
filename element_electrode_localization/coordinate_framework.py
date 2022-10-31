@@ -140,7 +140,7 @@ class ParentBrainRegion(dj.Lookup):
 
     Attributes:
         BrainRegionAnnotation.BrainRegion (foreign key): BrainRegionAnnotation.BrainRegion primary key.
-        BrainRegionAnnotation.BrainRegion.proj(parent='acronym') (query): fetches brain region acronym
+        Parent (query): parent brain region acronym from BrainRegion table
     """
 
     definition = """ # Hierarchical structure between the brain regionss
