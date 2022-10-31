@@ -102,7 +102,7 @@ class BrainRegionAnnotation(dj.Lookup):
         """Voxel information from CCF.
 
         Attributes:
-            master.BrainRegion (foreign key): BrainRegionAnnotation.BrainRegion primary key.
+            BrainRegion (foreign key): BrainRegionAnnotation.BrainRegion primary key.
             CCF.Voxel (foreign key): CCF.Voxel primary key.
         """
         definition = """
