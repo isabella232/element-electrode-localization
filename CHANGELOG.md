@@ -15,6 +15,6 @@ Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and
 + Loaders for CCF atlas and channel locations json files
 + Adopted black formatting into code base
 
-[0.2.0]: https://github.com/datajoint/element-electrode-localization/releases/tag/0.1.2
+[0.1.2]: https://github.com/datajoint/element-electrode-localization/releases/tag/0.1.2
 [0.1.1]: https://github.com/datajoint/element-electrode-localization/releases/tag/0.1.1
 [0.1.0]: https://github.com/datajoint/element-electrode-localization/releases/tag/0.1.0
