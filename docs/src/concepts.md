@@ -21,7 +21,11 @@ In coordination with both the Mesoscale Activity Project and the International B
 
 ## Pipeline Development and Limitations
 
-The Element's table architecture was generalized from existing project-specific pipelines to load standardized Kilosort `channel_locations.json` files as well as the Allen Institute's [atlas files](https://community.brain-map.org/t/allen-mouse-ccf-accessing-and-using-related-data-and-tools/359), and pair these data sets.
+The Element's table architecture was generalized from existing project-specific
+pipelines such as International Brain Laboratory's `channel_locations.json` as well as the Allen
+Institute's [atlas
+files](https://community.brain-map.org/t/allen-mouse-ccf-accessing-and-using-related-data-and-tools/359),
+and pair these data sets.
 
 One notable consession was made in development: acronyms in DataJoint do not perfectly map on to the Allen Institute's published standard. By default, DataJoint databases are not case sensitive. Instead, acronyms are convered to [snake case](https://en.wikipedia.org/wiki/Snake_case) to avoid naming collisions. While we depart from the standard, preliminary interviews with users indicate no bias toward the official standard. Visit our [localization notebook](https://github.com/datajoint/workflow-array-ephys/blob/main/notebooks/08-electrode-localization.ipynb) for a demonstration of converting between the case sensitive and snake case standards. 
 
