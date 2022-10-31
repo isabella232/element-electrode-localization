@@ -27,7 +27,8 @@ def activate(
     """Activates the `electrode_localization` and `coordinate_framework` schemas. 
 
     Args:
-        electrode_localization_schema_name (str): A string containing the name of the electrode_localization schema.
+        electrode_localization_schema_name (str): A string containing the name of the 
+            electrode_localization schema.
         coordinate_framework_schema_name (str): A string containing the name of the coordinate_framework schema.
         create_schema (bool): If True, schema will be created in the database.
         create_tables (bool): If True, tables related to the schema will be created in the database.
