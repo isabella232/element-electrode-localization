@@ -27,7 +27,7 @@ One notable consession was made in development: acronyms in DataJoint do not per
 
 ## Roadmap
 
-Further development of this Element is community driven. Upon user requests we will continue adding features to this Element.
+Further development of this Element is community driven. Upon user requests we will continue adding features to this Element, such as improved topological referencing.
 
 ## References
 

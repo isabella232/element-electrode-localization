@@ -28,7 +28,7 @@ def activate(
 
     Args:
         electrode_localization_schema_name (str): A string containing the name of the electrode_localization schema.
-        coordinate_framework_schema_name (str): A string containing the name of the coordinate_framework scehma.
+        coordinate_framework_schema_name (str): A string containing the name of the coordinate_framework schema.
         create_schema (bool): If True, schema will be created in the database.
         create_tables (bool): If True, tables related to the schema will be created in the database.
         linking_module (str): A string containing the module name or module containing the required dependencies to activate the schema.
@@ -68,9 +68,10 @@ def get_electrode_localization_dir(probe_insertion_key: dict) -> str:
     The directory should contain `channel_locations.json` files (one per shank)for the corresponding `probe_insertion_key`.
     
     Args:
-        probe_insertion_key (dict): key of a ProbeInsertion
+        probe_insertion_key (dict): key of a ProbeInsertion.
+    
     Returns:
-    Pathlib.Path: full file-path of the electrode localization dir
+        The full file-path of the electrode localization dir.
     """
     return _linking_module.get_electrode_localization_dir(probe_insertion_key)
 
@@ -86,6 +87,7 @@ class ElectrodePosition(dj.Imported):
         ProbeInsertion (foreign key): ProbeInsertion primary key.
         coodinate_framework.CCF (foreign key): coordinate_framework.CCF primary key.
     """
+
     definition = """
     -> ProbeInsertion
     -> coordinate_framework.CCF
@@ -99,6 +101,7 @@ class ElectrodePosition(dj.Imported):
             probe.ProbeType.Electrode (foreign key): probe.ProbeType.Electrode primary key.
             coordinate_framework.CCF.Voxel (query): fetches Voxel information from coordinate_framework schema.
         """
+
         definition = """
         -> master
         -> probe.ProbeType.Electrode

@@ -51,7 +51,7 @@ class CCF(dj.Lookup):
         """CCF voxel coordinates.
 
         Attributes:
-            master (foreign key): CCF primary key.
+            CCF (foreign key): CCF primary key.
             x (foreign key, int): Anterior-to-posterior axis (AP axis) in micrometers.
             y (foreign key, int): Superior-to_inferior axis (DV axis) in micrometers.
             z (foreign key, int): Left-to-right (ML axis) in micrometers.
@@ -73,6 +73,7 @@ class BrainRegionAnnotation(dj.Lookup):
     Attributes:
         CCF (foreign key): CCF primary key.
     """
+
     definition = """
     -> CCF
     """
@@ -81,7 +82,7 @@ class BrainRegionAnnotation(dj.Lookup):
         """Brain region information.
         
         Attributes:
-            master (foreign key): BrainRegionAnnotion primary key.
+            BrainRegionAnnotation (foreign key): BrainRegionAnnotation primary key.
             acronym (foreign key, varchar(32) ): Brain region acronym.
             region_name (varchar(128) ): Brain region full name.
             region_id (int): Brain region ID.
@@ -122,6 +123,7 @@ class BrainRegionAnnotation(dj.Lookup):
             x (float): x coordinate.
             y (float): y coordinate.
             z (float): z coordinate.
+        
         Raises:
             ValueError: Must specificy at least one dimension.
             NotImplementedError: Coming soon.
@@ -154,7 +156,13 @@ class ParentBrainRegion(dj.Lookup):
 def load_ccf_annotation(
     ccf_id, version_name, voxel_resolution, nrrd_filepath, ontology_csv_filepath
 ):
-    """Load CCF annotation
+    """Load CCF annotation.
+
+    For an example Allen brain atlas for mouse, see:
+    http://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017
+    For the structure/ontology tree, see:
+    https://community.brain-map.org/t/allen-mouse-ccf-accessing-and-using-related-data-and-tools/359
+    (particularly the ontology file downloadable as CSV)
 
     Args:
         ccf_id (int): unique id to identify a new CCF dataset to be inserted.
