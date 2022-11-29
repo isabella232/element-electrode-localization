@@ -9,4 +9,4 @@ to assemble a fully functional pipeline.
 ![diagram](https://raw.githubusercontent.com/datajoint/element-electrode-localization/main/images/diagram_flowchart.svg)
 
 Installation and usage instructions can be found at the 
-[Element documentation](datajoint.com/docs/elements/element-electrode-localization).
+[Element documentation](https://datajoint.com/docs/elements/element-electrode-localization).
