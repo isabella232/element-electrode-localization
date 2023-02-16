@@ -1,8 +1,9 @@
 import importlib
 import inspect
-import pathlib
 import json
 import logging
+import pathlib
+
 import datajoint as dj
 import numpy as np
 
@@ -24,10 +25,10 @@ def activate(
     create_tables=True,
     linking_module=None,
 ):
-    """Activates the `electrode_localization` and `coordinate_framework` schemas. 
+    """Activates the `electrode_localization` and `coordinate_framework` schemas.
 
     Args:
-        electrode_localization_schema_name (str): A string containing the name of the 
+        electrode_localization_schema_name (str): A string containing the name of the
             electrode_localization schema.
         coordinate_framework_schema_name (str): A string containing the name of the coordinate_framework schema.
         create_schema (bool): If True, schema will be created in the database.
@@ -67,10 +68,10 @@ def get_electrode_localization_dir(probe_insertion_key: dict) -> str:
     """Retrieve the electrode localization directory associated with a ProbeInsertion.
 
     The directory should contain `channel_locations.json` files (one per shank)for the corresponding `probe_insertion_key`.
-    
+
     Args:
         probe_insertion_key (dict): key of a ProbeInsertion.
-    
+
     Returns:
         The full file-path of the electrode localization dir.
     """
@@ -111,8 +112,7 @@ class ElectrodePosition(dj.Imported):
         """
 
     def make(self, key):
-        """Populates electrode position tables.
-        """
+        """Populates electrode position tables."""
         skipped_electrode_count = 0
         voxel_resolution = (coordinate_framework.CCF & key).fetch1("ccf_resolution")
         electrode_location_dir = pathlib.Path(get_electrode_localization_dir(key))

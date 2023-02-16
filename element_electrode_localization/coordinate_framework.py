@@ -1,23 +1,22 @@
 import logging
 import pathlib
-from tqdm import tqdm
-import datajoint as dj
-import pandas as pd
-import numpy as np
-from tqdm import tqdm
-import nrrd
 import re
 
+import datajoint as dj
+import nrrd
+import numpy as np
+import pandas as pd
+from tqdm import tqdm
 
 log = logging.getLogger(__name__)
 schema = dj.schema()
 
 
 def activate(schema_name, *, create_schema=True, create_tables=True):
-    """Activates the schema. 
+    """Activates the schema.
 
     Args:
-        schema_name (str): A string containing the name of the probe scehma.
+        schema_name (str): A string containing the name of the probe schema.
         create_schema (bool): If True, schema will be created in the database.
         create_tables (bool): If True, tables related to the schema will be created in the database.
     """
@@ -31,7 +30,7 @@ def activate(schema_name, *, create_schema=True, create_tables=True):
 @schema
 class CCF(dj.Lookup):
     """Common coordinate framework information.
-    
+
     Attributes:
         ccf_id (foreign key, int): CCF ID/atlas ID.
         ccf_version (varchar(64) ): Allen CCF version.
@@ -80,13 +79,13 @@ class BrainRegionAnnotation(dj.Lookup):
 
     class BrainRegion(dj.Part):
         """Brain region information.
-        
+
         Attributes:
             BrainRegionAnnotation (foreign key): BrainRegionAnnotation primary key.
             acronym (foreign key, varchar(32) ): Brain region acronym.
             region_name (varchar(128) ): Brain region full name.
             region_id (int): Brain region ID.
-            color_code (varchar(6) ): Hexcode of the color code for this region. 
+            color_code (varchar(6) ): Hex code of the color code for this region.
         """
 
         definition = """
@@ -95,7 +94,7 @@ class BrainRegionAnnotation(dj.Lookup):
         ---
         region_name: varchar(128)
         region_id=null: int
-        color_code=null: varchar(6)  # hexcode of the color code of this region
+        color_code=null: varchar(6)  # Hex code of the color code of this region
         """
 
     class Voxel(dj.Part):
@@ -105,6 +104,7 @@ class BrainRegionAnnotation(dj.Lookup):
             BrainRegion (foreign key): BrainRegionAnnotation.BrainRegion primary key.
             CCF.Voxel (foreign key): CCF.Voxel primary key.
         """
+
         definition = """
         -> master.BrainRegion
         -> CCF.Voxel
@@ -118,12 +118,12 @@ class BrainRegionAnnotation(dj.Lookup):
     @classmethod
     def voxel_query(self, x=None, y=None, z=None):
         """Given one or more coordinates, return unique brain regions
-        
+
         Args:
             x (float): x coordinate.
             y (float): y coordinate.
             z (float): z coordinate.
-        
+
         Raises:
             ValueError: Must specificy at least one dimension.
             NotImplementedError: Coming soon.
@@ -143,7 +143,7 @@ class ParentBrainRegion(dj.Lookup):
         Parent (query): parent brain region acronym from BrainRegion table
     """
 
-    definition = """ # Hierarchical structure between the brain regionss
+    definition = """ # Hierarchical structure between the brain regions
     -> BrainRegionAnnotation.BrainRegion
     ---
     -> BrainRegionAnnotation.BrainRegion.proj(parent='acronym')

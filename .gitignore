@@ -76,3 +76,4 @@ temp*
 
 #mkdocs documentation
 site
+docs/src/tutorials/*ipynb
