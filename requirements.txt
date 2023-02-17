@@ -1,2 +1,3 @@
 datajoint>=0.13
+element-interface>=0.3.0
 pynrrd

@@ -7,4 +7,4 @@ the [Allen Mouse Common Coordinate Framework (CCF)](http://atlas.brain-map.org/)
 
 The Element consists of `coordinate_framework` and `electrode_localization`. Visit the
 [Concepts page](./concepts.md) for more information about the use cases of this Element
-and an explanation of the tables. 
+and an explanation of the tables.
