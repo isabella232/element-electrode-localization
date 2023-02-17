@@ -9,8 +9,8 @@ instructions use the example
 [workflow for Element Array Ephys](https://github.com/datajoint/workflow-array-ephys),
 which can be modified for a user's specific experimental requirements. This example
 workflow uses several Elements (Lab, Animal, Session, Event, Electrophysiology, and
-Electrode Localization) to construct a complete pipeline, and is able to ingest
-experimental metadata and run model training and inference.
+Electrode Localization) to construct a complete pipeline, and is able to store
+experimental data and run data analysis.
 
 ### Notebooks
 
