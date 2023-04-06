@@ -18,7 +18,7 @@ to assemble a fully functional pipeline.
 
 + Install from PyPI
 
-     ```
+     ```bash
      pip install element-electrode-localization
      ```
 
