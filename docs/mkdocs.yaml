@@ -8,7 +8,7 @@ nav:
   - Element Electrode Localization: index.md
   - Concepts: concepts.md
   - Tutorials: 
-    - Overview: tutorials/index.md
+    - tutorials/index.md
     - Notebook: tutorials/08-electrode-localization.ipynb
   - Citation: citation.md
   - API: api/ # defer to gen-files + literate-nav
@@ -87,9 +87,7 @@ theme:
 plugins:
   - markdownextradata: {}
   - search
-  # - redirects: # OPTIONAL REDIRECTS
-  #     redirect_maps:
-  #       "index.md": "getting_started.md"
+  - section-index
   - mkdocstrings:
       default_handler: python
       handlers:
