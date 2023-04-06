@@ -16,4 +16,10 @@ to assemble a fully functional pipeline.
 
 ## Getting started
 
-+ [Documentation](https://datajoint.com/docs/elements/element-electrode-localization)
++ Install from PyPI
+
+     ```
+     pip install element-electrode-localization
+     ```
+
++ [Documentation & Tutorials](https://datajoint.com/docs/elements/element-electrode-localization)
