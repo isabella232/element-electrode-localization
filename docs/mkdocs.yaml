@@ -51,8 +51,7 @@ nav:
 #     B. To pull a specific workflow fork, change ./docs/src/api/make_pages.py#L19
 # 03. To see your fork of the workflow-{element} in this render, change the
 #     URL in ./docs/src/api/make_pages.py#L19 to your fork.
-# 04. For redirect options, see 'redirects' below.
-# 05. To deploy this site on your fork, 
+# 04. To deploy this site on your fork, 
 #     A. declare a branch called gh-pages
 #     B. go to the your fork > settings > pages 
 #     C. direct pages to render from the gh-pages branch at root
