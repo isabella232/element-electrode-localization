@@ -1,15 +1,21 @@
 # Element Electrode Localization
 
-This Element features DataJoint schemas for localizing Neuropixels electrodes within
-## Experiment flowchart
+DataJoint Element for localizing Neuropixels electrodes within the Allen brain atlas - 
+[Allen Mouse Common Coordinate Framework (CCF)](http://atlas.brain-map.org/). DataJoint 
+Elements collectively standardize and automate data collection and analysis for 
+neuroscience experiments. Each Element is a modular pipeline for data storage and 
+processing with corresponding database tables that can be combined with other Elements 
+to assemble a fully functional pipeline.
+
+## Experiment Flowchart
 
 ![flowchart](https://raw.githubusercontent.com/datajoint/element-electrode-localization/main/images/flowchart.svg)
 
-## Data pipeline
+## Data Pipeline
 
 ![pipeline](https://raw.githubusercontent.com/datajoint/element-electrode-localization/main/images/pipeline.svg)
 
-## Getting started
+## Getting Started
 
 + Install from PyPI
 
@@ -17,9 +23,8 @@ This Element features DataJoint schemas for localizing Neuropixels electrodes wi
      pip install element-electrode-localization
      ```
 
++ [Tutorials page](./tutorials.md) - Start building your data pipeline
 
-![diagram](https://raw.githubusercontent.com/datajoint/element-electrode-localization/main/images/diagram_flowchart.svg)
++ [Concepts page](./concepts.md) - Element Electrode Localization architecture, roadmap, and key partnerships
 
-The Element consists of `coordinate_framework` and `electrode_localization`. Visit the
-[Concepts page](./concepts.md) for more information about the use cases of this Element
-and an explanation of the tables.
++ [Code repository](https://github.com/datajoint/element-electrode-localization/)
