@@ -127,6 +127,7 @@ markdown_extensions:
   - pymdownx.inlinehilite
   - pymdownx.snippets
   - footnotes
+  - pymdownx.magiclink # Displays bare URLs as links
   - pymdownx.tasklist: # Renders check boxes in tasks lists
       custom_checkbox: true
 extra:
