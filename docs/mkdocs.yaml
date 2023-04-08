@@ -6,10 +6,11 @@ repo_url: https://github.com/datajoint/element-electrode-localization
 repo_name: datajoint/element-electrode-localization
 nav:
   - Element Electrode Localization: index.md
-  - Concepts: concepts.md
+  - Data Pipeline: pipeline.md
   - Tutorials: 
     - tutorials/index.md
     - Notebook: tutorials/08-electrode-localization.ipynb
+  - Concepts: concepts.md
   - Citation: citation.md
   - API: api/ # defer to gen-files + literate-nav
   - Changelog: changelog.md

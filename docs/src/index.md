@@ -23,8 +23,10 @@ to assemble a fully functional pipeline.
      pip install element-electrode-localization
      ```
 
-+ [Tutorials page](./tutorials.md) - Start building your data pipeline
++ [Data Pipeline](./pipeline.md) - Pipeline and table descriptions
 
-+ [Concepts page](./concepts.md) - Element Electrode Localization architecture, roadmap, and key partnerships
++ [Tutorials](./tutorials.md) - Start building your data pipeline
 
-+ [Code repository](https://github.com/datajoint/element-electrode-localization/)
++ [Concepts](./concepts.md) - Key partnerships and roadmap
+
++ [Code Repository](https://github.com/datajoint/element-electrode-localization/){:target="_blank"}
