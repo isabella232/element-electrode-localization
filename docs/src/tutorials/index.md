@@ -2,17 +2,21 @@
 
 ## Installation
 
-Installation of the Element requires an integrated development environment and database.
-Instructions to setup each of the components can be found on the
-[User Instructions](https://datajoint.com/docs/elements/user-guide/) page. These
-instructions use the example
+```bash
+pip install element-electrode-localization
+```
+
++ See the [User Instructions page](https://datajoint.com/docs/elements/user-guide/) to 
+install the integrated development environment and database.
+
++ These instructions use the example
 [workflow for Element Array Ephys](https://github.com/datajoint/workflow-array-ephys),
 which can be modified for a user's specific experimental requirements. This example
 workflow uses several Elements (Lab, Animal, Session, Event, Electrophysiology, and
 Electrode Localization) to construct a complete pipeline, and is able to store
 experimental data and run data analysis.
 
-### Notebooks
+## Notebooks
 
 The [Electrode Localization notebook](./08-electrode-localization.ipynb) is part of a
 larger [tutorial series](https://datajoint.com/docs/elements/element-array-ephys/latest/tutorials/)
