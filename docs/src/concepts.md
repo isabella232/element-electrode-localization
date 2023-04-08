@@ -14,13 +14,12 @@ of mouse atlases since 2007[^1], with regular
 updates[^2] that provide researchers with a shared reference
 frame in the study of functional neuroanatomy.
 
-[^1]: Lein, E. S., Hawrylycz, M. J., Ao, N., Ayres, M., Bensinger, A., Bernard, A., ...
-    & Jones, A. R. (2007). Genome-wide atlas of gene expression in the adult mouse
-    brain. *Nature*, 445(7124), 168-176.
+## Key Partnerships
 
-[^2]: Wang, Q., Ding, S. L., Li, Y., Royall, J., Feng, D., Lesnar, P., ... & Ng, L.
-    (2020). The Allen mouse brain common coordinate framework: a 3D reference atlas.
-    *Cell*, 181(4), 936-953.
+Labs have developed project-specific DataJoint pipelines for pairing the coordinates of recording electrodes with the location in published atlases. The DataJoint team collaborated with several and interviewed these teams to understand their experiment workflow, associated tools, and interfaces. These teams include:
+
++ Mesoscale Activity Project
++ International Brain Lab
 
 ## Element Architecture
 
@@ -29,7 +28,7 @@ modalities to organize, preprocess, and analyze data. Each node in the following
 is either a table in the Element itself or a table that would be connected to the
 Element.
 
-![element-electrode-localization diagram](https://raw.githubusercontent.com/datajoint/element-electrode-localization/main/images/diagram_electrode_localization.svg)
+![pipeline](https://raw.githubusercontent.com/datajoint/element-electrode-localization/main/images/pipeline.svg)
 
 The Element is separated into two schemas:
 
