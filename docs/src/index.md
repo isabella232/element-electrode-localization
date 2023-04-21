@@ -25,7 +25,7 @@ to assemble a fully functional pipeline.
 
 + [Data Pipeline](./pipeline.md) - Pipeline and table descriptions
 
-+ [Tutorials](./tutorials.md) - Start building your data pipeline
++ [Tutorials](./tutorials/index.md) - Start building your data pipeline
 
 + [Concepts](./concepts.md) - Key partnerships and roadmap
 
