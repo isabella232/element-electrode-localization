@@ -24,7 +24,7 @@ setup(
     keywords="neuroscience electrode science datajoint",
     packages=find_packages(exclude=["contrib", "docs", "tests*"]),
     scripts=[],
-    install_requires=["datajoint>=0.13.0", "pynrrd"],
+    install_requires=["datajoint>=0.13.0", "pynrrd", "ipykernel>=6.0.1", "ipywidgets"],
     extras_require={
         "elements": [
             "element-animal @ git+https://github.com/datajoint/element-animal.git",
