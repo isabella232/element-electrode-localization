@@ -25,7 +25,7 @@ setup(
     packages=find_packages(exclude=["contrib", "docs", "tests*"]),
     scripts=[],
     install_requires=["datajoint>=0.13.0", "pynrrd"],
-    extra_require={
+    extras_require={
         "elements": [
             "element-animal @ git+https://github.com/datajoint/element-animal.git",
             "element-event @ git+https://github.com/datajoint/element-event.git",
