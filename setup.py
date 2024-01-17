@@ -32,6 +32,7 @@ setup(
             "element-interface @ git+https://github.com/datajoint/element-interface.git",
             "element-lab @ git+https://github.com/datajoint/element-lab.git",
             "element-session @ git+https://github.com/datajoint/element-session.git",
+            "element-array-ephys @ git+https://github.com/datajoint/element-array-ephys.git",
         ],
     },
 )
