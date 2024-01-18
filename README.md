@@ -23,7 +23,7 @@ to assemble a fully functional pipeline.
 + Clone the repository to your computer.
 
      ```bash
-     git clone https://github.com/<enter_github_username>/element-deeplabcut
+     git clone https://github.com/<enter_github_username>/element-electrode-localization
      ```
 
 + [Interactive tutorial on GitHub Codespaces](https://github.com/datajoint/element-electrode-localization#interactive-tutorial)
