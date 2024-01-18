@@ -12,16 +12,27 @@ log = logging.getLogger(__name__)
 schema = dj.schema()
 
 
-def activate(schema_name, *, create_schema=True, create_tables=True):
+def activate(
+    schema_name: str,
+    *,
+    create_schema: bool = True,
+    create_tables: bool = True,
+):
     """Activates the schema.
 
     Args:
-        schema_name (str): A string containing the name of the probe schema.
-        create_schema (bool): If True, schema will be created in the database.
-        create_tables (bool): If True, tables related to the schema will be created in the database.
+        schema_name (str): schema name on the database server
+        create_schema (bool): when True (default), create schema in the database if it
+                            does not yet exist.
+        create_tables (bool): when True (default), create schema tables in the database
+                             if they do not yet exist.
     """
+
+    # activate
     schema.activate(
-        schema_name, create_schema=create_schema, create_tables=create_tables
+        schema_name,
+        create_schema=create_schema,
+        create_tables=create_tables,
     )
 
     # ----------------------------- Table declarations ----------------------
