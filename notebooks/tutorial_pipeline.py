@@ -49,9 +49,10 @@ def get_electrode_localization_dir():
 # Activate schemas -------------
 lab.activate(db_prefix + "lab")
 subject.activate(db_prefix + "subject", linking_module=__name__)
-session.activate(db_prefix + "session", linking_module=__name__)
-Session = session.Session
 Experimenter = lab.User
+Session = session.Session
+session.activate(db_prefix + "session", linking_module=__name__)
+
 
 ephys.activate(db_prefix + "ephys", db_prefix + "probe", linking_module=__name__)
 ProbeInsertion = ephys.ProbeInsertion
