@@ -1,17 +1,15 @@
 import os
 import pathlib
 import datajoint as dj
-from element_lab import lab
 from element_animal import subject
+from element_animal.subject import Subject
+from element_array_ephys import probe, ephys_acute as ephys
+from element_lab import lab
+from element_lab.lab import Lab, Location, Project, Protocol, Source, User
+from element_lab.lab import User as Experimenter
 from element_session import session_with_datetime as session
 from element_session.session_with_datetime import Session
 from element_electrode_localization import electrode_localization, coordinate_framework
-from element_lab.lab import Device as Equipment
-
-from element_array_ephys import probe, ephys_no_curation as ephys
-from element_animal.subject import Subject
-from element_lab.lab import Lab, Project, Protocol, Source, User
-
 
 if "custom" not in dj.config:
     dj.config["custom"] = {}
@@ -26,24 +24,6 @@ if "custom" not in dj.config:
     dj.config["custom"] = {}
 
 db_prefix = dj.config["custom"].get("database.prefix", "")
-
-
-# Declare functions for retrieving data
-def get_electrode_localization_dir():
-    """Retrieve electrode_localization root data directory."""
-    eloc_root_dirs = dj.config.get("custom", {}).get(
-        "get_electrode_localization_dir", None
-    )
-    if not eloc_root_dirs:
-        return None
-    elif isinstance(eloc_root_dirs, (str, pathlib.Path)):
-        return [eloc_root_dirs]
-    elif isinstance(eloc_root_dirs, list):
-        return eloc_root_dirs
-    else:
-        raise TypeError(
-            "`get_electrode_localization_dir` must be a string, pathlib, or list"
-        )
 
 
 # Activate schemas -------------
