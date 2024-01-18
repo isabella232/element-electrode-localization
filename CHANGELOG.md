@@ -3,6 +3,16 @@
 Observes [Semantic Versioning](https://semver.org/spec/v2.0.0.html) standard and
 [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) convention.
 
+## [0.1.6] - 2024-01-18
++ Add - DevContainer and test Codespaces on GitHub
++ Add - `tutorial.ipynb` and `tutorial_pipeline.py`  
++ Add - release and test YAML files in `.github`
++ Update - various files of the project configuration
++ Update - `setup.py` by adding `extras_require` and `dj.config()` for the tutorial
++ Update - packaging requirements will now install directly from GitHub instead of PyPI
++ Update - README
++ Update - flowchart color according to other Elements
+
 ## [0.1.5] - 2023-05-11
 
 + Fix - `.ipynb` dark mode output for all notebooks.
