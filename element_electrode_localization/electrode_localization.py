@@ -9,7 +9,7 @@ import numpy as np
 
 from . import coordinate_framework
 
-schema = dj.schema()
+schema = dj.Schema()
 
 log = logging.getLogger(__name__)
 
@@ -18,12 +18,12 @@ ProbeInsertion, probe = None, None
 
 
 def activate(
-    electrode_localization_schema_name,
-    coordinate_framework_schema_name=None,
+    electrode_localization_schema_name: str,
+    coordinate_framework_schema_name: str = None,
     *,
-    create_schema=True,
-    create_tables=True,
-    linking_module=None,
+    create_schema: bool = True,
+    create_tables: bool = True,
+    linking_module: str = None,
 ):
     """Activates the `electrode_localization` and `coordinate_framework` schemas.
 
@@ -34,6 +34,12 @@ def activate(
         create_schema (bool): If True, schema will be created in the database.
         create_tables (bool): If True, tables related to the schema will be created in the database.
         linking_module (str): A string containing the module name or module containing the required dependencies to activate the schema.
+
+    Dependencies:
+    Functions:
+        get_electrode_localization_dir(): Returns absolute path for root data director(y/ies)
+                                 with all electrode localizations, as (list of) string(s).
+
     """
 
     if isinstance(linking_module, str):
@@ -159,7 +165,6 @@ class ElectrodePosition(dj.Imported):
         for channel_locations_file, shank_no in zip(
             channel_locations_files, corresponding_shanks
         ):
-
             log.debug(f"loading channel locations from {channel_locations_file}")
             with open(channel_locations_file, "r") as fh:
                 chn_loc_raw = json.loads(fh.read())
