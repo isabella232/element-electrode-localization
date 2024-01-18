@@ -26,6 +26,14 @@ if "custom" not in dj.config:
 db_prefix = dj.config["custom"].get("database.prefix", "")
 
 
+@lab.schema
+class SkullReference(dj.Lookup):
+    definition = """
+    skull_reference   : varchar(60)
+    """
+    contents = zip(["Bregma", "Lambda"])
+
+
 # Activate schemas -------------
 lab.activate(db_prefix + "lab")
 subject.activate(db_prefix + "subject", linking_module=__name__)
