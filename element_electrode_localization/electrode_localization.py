@@ -11,7 +11,7 @@ from . import coordinate_framework
 
 schema = dj.schema()
 
-log = logging.getLogger(__name__)
+log = dj.logger
 
 _linking_module = None
 ProbeInsertion, probe = None, None

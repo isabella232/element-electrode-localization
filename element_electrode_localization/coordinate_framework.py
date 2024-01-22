@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
-log = logging.getLogger(__name__)
+log = dj.logger
 schema = dj.schema()
 
 
