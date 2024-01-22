@@ -9,7 +9,7 @@ import numpy as np
 
 from . import coordinate_framework
 
-schema = dj.Schema()
+schema = dj.schema()
 
 log = logging.getLogger(__name__)
 
