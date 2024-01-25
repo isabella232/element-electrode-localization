@@ -44,8 +44,7 @@ session.activate(db_prefix + "session", linking_module=__name__)
 
 ephys.activate(db_prefix + "ephys", db_prefix + "probe", linking_module=__name__)
 ProbeInsertion = ephys.ProbeInsertion
+
 electrode_localization.activate(
-    db_prefix + "electrode_localization",
-    db_prefix + "coordinate_framework",
-    linking_module=__name__,
+    db_prefix + "electrode_localization", db_prefix + "ccf", linking_module=__name__
 )
