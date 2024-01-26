@@ -42,6 +42,40 @@ def get_ephys_root_data_dir():
         raise TypeError("`ephys_root_data_dir` must be a string, pathlib, or list")
 
 
+def get_electrode_localization_dir(probe_insertion_key: dict) -> str:
+    """Return root directory of localization data for a given probe
+
+    Args:
+        probe_insertion_key (dict): key uniquely identifying one ephys.EphysRecording
+
+    Returns:
+        path (str): Full path to localization data for either SpikeGLX or OpenEphys
+    """
+
+    acq_software = (ephys.EphysRecording & probe_insertion_key).fetch1("acq_software")
+
+    if acq_software == "SpikeGLX":
+        spikeglx_meta_filepath = pathlib.Path(
+            (
+                ephys.EphysRecording.EphysFile
+                & probe_insertion_key
+                & 'file_path LIKE "%.ap.meta"'
+            ).fetch1("file_path")
+        )
+        probe_dir = find_full_path(
+            get_ephys_root_data_dir(), spikeglx_meta_filepath.parent
+        )
+    elif acq_software == "Open Ephys":
+        probe_path = (ephys.EphysRecording.EphysFile & probe_insertion_key).fetch1(
+            "file_path"
+        )
+        probe_dir = find_full_path(
+            get_ephys_root_data_dir(), probe_path
+        )
+
+    return probe_dir
+
+
 @lab.schema
 class SkullReference(dj.Lookup):
     definition = """
