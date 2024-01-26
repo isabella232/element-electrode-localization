@@ -76,6 +76,11 @@ def get_electrode_localization_dir(probe_insertion_key: dict) -> str:
     return probe_dir
 
 
+def get_session_directory(session_key):
+    session_directory = (session.SessionDirectory & session_key).fetch1("session_dir")
+    return pathlib.Path(session_directory)
+
+
 @lab.schema
 class SkullReference(dj.Lookup):
     definition = """
