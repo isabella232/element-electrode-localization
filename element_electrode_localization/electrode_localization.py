@@ -258,7 +258,7 @@ class ElectrodePosition(dj.Imported):
             rec_to_elec_idx = np.array(
                 [elec_coord_map[tuple(i)] for i in rec_electrodes]
             )
-            
+
             for electrode, x, y, z in zip(
                 probe_electrodes[rec_to_elec_idx]["electrode"],
                 pos_xyz[:, 0],
