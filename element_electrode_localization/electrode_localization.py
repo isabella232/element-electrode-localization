@@ -255,9 +255,12 @@ class ElectrodePosition(dj.Imported):
 
             elec_coord_map = {tuple(c): i for i, c in enumerate(elec_coord)}
 
-            rec_to_elec_idx = np.array(
-                [elec_coord_map[tuple(i)] for i in rec_electrodes]
-            )
+            try:
+                rec_to_elec_idx = np.array(
+                    [elec_coord_map[tuple(i)] for i in rec_electrodes]
+                )
+            except KeyError:
+                continue
 
             for electrode, x, y, z in zip(
                 probe_electrodes[rec_to_elec_idx]["electrode"],
