@@ -254,14 +254,14 @@ class ElectrodePosition(dj.Imported):
             ).T
 
             elec_coord_map = {tuple(c): i for i, c in enumerate(elec_coord)}
+            elec_idx = []
+            for val in rec_electrodes:
+                try:
+                    elec_idx.append(elec_coord_map[tuple(val)])
+                except KeyError:
+                    continue
 
-            try:
-                rec_to_elec_idx = np.array(
-                    [elec_coord_map[tuple(i)] for i in rec_electrodes]
-                )
-            except KeyError:
-                continue
-
+            rec_to_elec_idx = np.asarray(elec_idx)
             for electrode, x, y, z in zip(
                 probe_electrodes[rec_to_elec_idx]["electrode"],
                 pos_xyz[:, 0],
