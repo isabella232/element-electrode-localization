@@ -8,11 +8,16 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
-log = logging.getLogger(__name__)
+log = dj.logger
 schema = dj.schema()
 
 
-def activate(schema_name, *, create_schema=True, create_tables=True):
+def activate(
+    schema_name: str,
+    *,
+    create_schema: bool = True,
+    create_tables: bool = True,
+):
     """Activates the schema.
 
     Args:
@@ -20,8 +25,12 @@ def activate(schema_name, *, create_schema=True, create_tables=True):
         create_schema (bool): If True, schema will be created in the database.
         create_tables (bool): If True, tables related to the schema will be created in the database.
     """
+
+    # activate
     schema.activate(
-        schema_name, create_schema=create_schema, create_tables=create_tables
+        schema_name,
+        create_schema=create_schema,
+        create_tables=create_tables,
     )
 
     # ----------------------------- Table declarations ----------------------
