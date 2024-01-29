@@ -73,6 +73,9 @@ dj_local_c*.json
 temp*
 *nwb
 
-#mkdocs documentation
+# mkdocs documentation
 site
 docs/src/tutorials/*ipynb
+
+# Codespaces
+example_data/*
